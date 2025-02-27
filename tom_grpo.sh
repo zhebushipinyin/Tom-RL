@@ -10,7 +10,7 @@ python3 -m verl.trainer.main_ppo \
     data.val_files=data/tom/explore_tom/test.parquet \
     data.train_batch_size=8 \
     data.val_batch_size=8 \
-    data.max_prompt_length=400 \
+    data.max_prompt_length=768 \
     data.max_response_length=2048 \
     actor_rollout_ref.model.path=$MODEL_PATH\
     actor_rollout_ref.actor.optim.lr=3e-7 \
