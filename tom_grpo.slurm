@@ -1,12 +1,12 @@
 #!/bin/bash
 
 #SBATCH -J tom_rl
-#SBATCH --mem=100g
+#SBATCH --mem=200g
 #SBATCH -p DGX                    # 作业提交的分区为 DGX
 #SBATCH --nodes=1
 #SBATCH --gres=gpu:2            # 单个节点使用 1 块 GPU 卡
 #SBATCH --cpus-per-task=64
-#SBATCH -t 20:00:00
+#SBATCH -t 40:00:00
 #SBATCH -e logs/slurm-%j.err
 #SBATCH -o logs/slurm-%j.out
 #SBATCH --qos=lv0b               # 作业使用的 QoS 为 lv0b
@@ -90,7 +90,7 @@ python3 -m verl.trainer.main_ppo \
     trainer.logger=['console','wandb'] \
     trainer.project_name='GRPO_tom' \
     trainer.experiment_name='Qwen-7B-IM' \
-    trainer.n_gpus_per_node=4 \
+    trainer.n_gpus_per_node=2 \
     trainer.nnodes=1 \
     trainer.default_hdfs_dir=null \
     trainer.save_freq=10 \
