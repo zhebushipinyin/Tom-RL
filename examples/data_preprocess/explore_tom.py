@@ -32,7 +32,7 @@ def make_prefix(story, question, template_type='base'):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--local_dir', default='./data/explore_tom')
+    parser.add_argument('--local_dir', default='./data/tom/explore_tom')
     parser.add_argument('--hdfs_dir', default=None)
     parser.add_argument('--template_type', type=str, default='qwen-instruct', choices=['base', 'qwen-instruct'])
 
