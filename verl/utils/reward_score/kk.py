@@ -203,3 +203,10 @@ def compute_score(solution_str: str,
     print("="*80 + "\n")
 
     return total_score
+
+
+if __name__ == "__main__":
+    sample_solution_text_format = "(1) Ella is a knight\n(2) Zoey is a knave\n(3) Scarlett is a knight\n(4) Henry is a knight\n(5) Amelia is a knave"
+    # {'Ella': 'knight', 'Zoey': 'knave', 'Scarlett': 'knight', 'Henry': 'knight', 'Amelia': 'knave'}
+    gt_status = parse_solution_text_format(sample_solution_text_format)
+    print(gt_status)
