@@ -4,7 +4,7 @@
 #SBATCH --mem=100g
 #SBATCH -p DGX                    # 作业提交的分区为 DGX
 #SBATCH --nodes=1
-#SBATCH --gres=gpu:1             # 单个节点使用 1 块 GPU 卡
+#SBATCH --gres=gpu:2            # 单个节点使用 1 块 GPU 卡
 #SBATCH --cpus-per-task=64
 #SBATCH -t 20:00:00
 #SBATCH -e logs/slurm-%j.err
@@ -16,8 +16,44 @@ conda activate logic
 
 set -x
 
-export VLLM_ATTENTION_BACKEND=XFORMERS
 
+ray stop
+
+########################################################
+echo "job is starting on `hostname`"
+nodes=$(scontrol show hostnames "$SLURM_JOB_NODELIST")
+echo "Nodes: $nodes"
+
+nodes_array=($nodes)
+head_node=${nodes_array[0]}
+head_node_ip=$(srun --nodes=1 --ntasks=1 -w "$head_node" hostname --ip-address)
+echo "Head Node IP: $head_node_ip"
+
+if [[ "$head_node_ip" == *" "* ]]; then
+IFS=' ' read -ra ADDR <<<"$head_node_ip"
+if [[ ${#ADDR[0]} -gt 16 ]]; then
+  head_node_ip=${ADDR[1]}
+else
+  head_node_ip=${ADDR[0]}
+fi
+echo "IPV6 address detected. We split the IPV4 address as $head_node_ip"
+fi
+
+port=6379
+ip_head=$head_node_ip:$port
+export ip_head
+echo "IP Head: $ip_head"
+
+echo "Starting HEAD at $head_node"
+srun --nodes=1 --ntasks=1 -w "$head_node" \
+    ray start --head --node-ip-address="$head_node_ip" --port=$port \
+    --num-cpus "${SLURM_CPUS_PER_TASK}" --num-gpus "${SLURM_GRES}" --block &
+sleep 10
+worker_num=$((SLURM_JOB_NUM_NODES - 1))
+echo "Worker number: $worker_num"
+########################################################
+
+export VLLM_ATTENTION_BACKEND=XFORMERS
 MODEL_PATH=Qwen/Qwen2.5-7B-Instruct-1M
 
 python3 -m verl.trainer.main_ppo \
