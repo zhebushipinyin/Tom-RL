@@ -19,6 +19,8 @@ set -x
 
 ray stop
 
+NUM_GPUS=$(nvidia-smi --query-gpu=name --format=csv,noheader | wc -l)
+
 ########################################################
 echo "job is starting on `hostname`"
 nodes=$(scontrol show hostnames "$SLURM_JOB_NODELIST")
@@ -47,7 +49,7 @@ echo "IP Head: $ip_head"
 echo "Starting HEAD at $head_node"
 srun --nodes=1 --ntasks=1 -w "$head_node" \
     ray start --head --node-ip-address="$head_node_ip" --port=$port \
-    --num-cpus "${SLURM_CPUS_PER_TASK}" --num-gpus "${SLURM_GRES}" --block &
+    --num-cpus "${SLURM_CPUS_PER_TASK}" --num-gpus "${NUM_GPUS}" --block &
 sleep 10
 worker_num=$((SLURM_JOB_NUM_NODES - 1))
 echo "Worker number: $worker_num"
