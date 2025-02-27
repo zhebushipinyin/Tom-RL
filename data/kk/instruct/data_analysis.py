@@ -1,6 +1,7 @@
 import pandas as pd
 import os
 import json
+import numpy as np
 from collections import defaultdict
 
 # Define the directory containing the difficulty configurations
@@ -16,6 +17,22 @@ results = {
 # Dictionary to store dataframes for attribute comparison
 all_train_dfs = {}
 all_test_dfs = {}
+
+# Sample from 5ppl test dataset
+sample_5ppl = None
+
+# Custom JSON encoder to handle NumPy types
+class NumpyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        if isinstance(obj, np.integer):
+            return int(obj)
+        if isinstance(obj, np.floating):
+            return float(obj)
+        if isinstance(obj, np.bool_):
+            return bool(obj)
+        return super(NumpyEncoder, self).default(obj)
 
 # Analyze each difficulty configuration
 for difficulty in difficulty_dirs:
@@ -39,6 +56,10 @@ for difficulty in difficulty_dirs:
             'test': len(test_df),
             'total': len(train_df) + len(test_df)
         }
+        
+        # Get a sample from 5ppl test dataset
+        if difficulty == '5ppl' and len(test_df) > 0:
+            sample_5ppl = test_df.iloc[0].to_dict()
 
 # Compare attributes across different difficulty configurations
 def compare_attributes(dfs_dict):
@@ -103,6 +124,29 @@ if test_attr_result['all_same_attributes']:
         markdown_content += f"- {attr}\n"
 else:
     markdown_content += "Test datasets have different attributes across difficulty configurations.\n"
+
+# Add sample from 5ppl test dataset
+if sample_5ppl:
+    markdown_content += "\n## Sample from 5ppl Test Dataset\n\n"
+    markdown_content += "Below is a sample problem from the 5ppl test dataset:\n\n"
+    markdown_content += "```json\n"
+    # Format the sample in a more readable way
+    formatted_sample = {}
+    
+    # First add the key fields that are most important to understand the problem
+    important_fields = ['quiz', 'names', 'knight_knave', 'statements', 'solution', 'solution_text']
+    for field in important_fields:
+        if field in sample_5ppl:
+            formatted_sample[field] = sample_5ppl[field]
+    
+    # Then add the remaining fields
+    for key, value in sample_5ppl.items():
+        if key not in formatted_sample:
+            formatted_sample[key] = value
+    
+    # Convert to JSON with indentation for readability, using the custom encoder
+    markdown_content += json.dumps(formatted_sample, indent=2, cls=NumpyEncoder)
+    markdown_content += "\n```\n"
 
 # Write the markdown content to a file
 with open(os.path.join(base_dir, 'dataset_analysis.md'), 'w') as f:
