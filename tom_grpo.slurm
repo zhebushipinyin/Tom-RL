@@ -4,12 +4,15 @@
 #SBATCH --mem=100g
 #SBATCH -p DGX                    # 作业提交的分区为 DGX
 #SBATCH --nodes=1
-#SBATCH --gres=gpu:2              # 单个节点使用 1 块 GPU 卡
+#SBATCH --gres=gpu:1             # 单个节点使用 1 块 GPU 卡
 #SBATCH --cpus-per-task=64
 #SBATCH -t 20:00:00
 #SBATCH -e logs/slurm-%j.err
 #SBATCH -o logs/slurm-%j.out
 #SBATCH --qos=lv0b               # 作业使用的 QoS 为 lv0b
+
+source ~/anaconda3/etc/profile.d/conda.sh
+conda activate logic
 
 set -x
 
