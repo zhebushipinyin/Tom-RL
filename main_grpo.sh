@@ -1,10 +1,12 @@
 set -x
-MODEL_PATH=xxx
+
 export VLLM_ATTENTION_BACKEND=XFORMERS
+MODEL_PATH=Qwen/Qwen2.5-7B-Instruct-1M
+
 python3 -m verl.trainer.main_ppo \
     algorithm.adv_estimator=grpo \
-    data.train_files=data/xxx \
-    data.val_files=dataxxx \
+    data.train_files=data/kk/instruct/merge/train.parquet \
+    data.val_files=data/kk/instruct/merge/test.parquet \
     data.train_batch_size=8 \
     data.val_batch_size=8 \
     data.max_prompt_length=400 \
@@ -30,13 +32,14 @@ python3 -m verl.trainer.main_ppo \
     actor_rollout_ref.ref.fsdp_config.param_offload=True \
     algorithm.kl_ctrl.kl_coef=0.001 \
     trainer.critic_warmup=0 \
-    trainer.logger=['wandb'] \
+    trainer.logger=['console','wandb'] \
     trainer.project_name='GRPO_logic_KK' \
-    trainer.experiment_name='Qwen-7B' \
+    trainer.experiment_name='Qwen-7B-IM' \
     trainer.n_gpus_per_node=4 \
     trainer.nnodes=1 \
-    trainer.default_local_dir=xxx \
     trainer.default_hdfs_dir=null \
     trainer.save_freq=10 \
     trainer.test_freq=10 \
     trainer.total_epochs=5 $@ 2>&1 | tee grpo.log
+
+# trainer.default_local_dir=xxx \
