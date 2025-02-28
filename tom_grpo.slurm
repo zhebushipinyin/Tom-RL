@@ -89,7 +89,7 @@ python3 -m verl.trainer.main_ppo \
     trainer.logger=['console','wandb'] \
     trainer.project_name='GRPO_tom' \
     trainer.experiment_name='Qwen-7B-IM' \
-    trainer.n_gpus_per_node=2 \
+    trainer.n_gpus_per_node=$NUM_GPUS \
     trainer.nnodes=1 \
     trainer.default_hdfs_dir=null \
     trainer.save_freq=10 \
