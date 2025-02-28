@@ -16,7 +16,6 @@ conda activate logic
 
 set -x
 
-
 ray stop
 
 NUM_GPUS=$(nvidia-smi --query-gpu=name --format=csv,noheader | wc -l)

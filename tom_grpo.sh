@@ -1,13 +1,15 @@
 set -x
 
+ray stop
+
 export VLLM_ATTENTION_BACKEND=XFORMERS
 
 MODEL_PATH=Qwen/Qwen2.5-7B-Instruct-1M
 
 python3 -m verl.trainer.main_ppo \
     algorithm.adv_estimator=grpo \
-    data.train_files=data/tom/explore_tom/train.parquet \
-    data.val_files=data/tom/explore_tom/test.parquet \
+    data.train_files=$HOME/data/tom/explore_tom/train.parquet \
+    data.val_files=$HOME/data/tom/explore_tom/test.parquet \
     data.train_batch_size=8 \
     data.val_batch_size=8 \
     data.max_prompt_length=768 \
@@ -36,7 +38,7 @@ python3 -m verl.trainer.main_ppo \
     trainer.logger=['console','wandb'] \
     trainer.project_name='GRPO_tom' \
     trainer.experiment_name='Qwen-7B-IM' \
-    trainer.n_gpus_per_node=4 \
+    trainer.n_gpus_per_node=2 \
     trainer.nnodes=1 \
     trainer.default_hdfs_dir=null \
     trainer.save_freq=10 \
