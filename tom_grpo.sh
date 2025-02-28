@@ -43,6 +43,6 @@ python3 -m verl.trainer.main_ppo \
     trainer.default_hdfs_dir=null \
     trainer.save_freq=10 \
     trainer.test_freq=10 \
-    trainer.total_epochs=5 $@ 2>&1 | tee tom_grpo.log
+    trainer.total_epochs=2 $@ 2>&1 | tee tom_grpo.log
 
 # trainer.default_local_dir=xxx \
