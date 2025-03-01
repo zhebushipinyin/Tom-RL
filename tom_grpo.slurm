@@ -2,9 +2,9 @@
 
 #SBATCH -J tom_rl
 #SBATCH --mem=200g
-#SBATCH -p DGX                    # 作业提交的分区为 DGX
+#SBATCH -p HGX                    # 作业提交的分区为 DGX
 #SBATCH --nodes=1
-#SBATCH --gres=gpu:2            # 单个节点使用 1 块 GPU 卡
+#SBATCH --gres=gpu:4            # 单个节点使用 1 块 GPU 卡
 #SBATCH --cpus-per-task=64
 #SBATCH -t 40:00:00
 #SBATCH -e logs/slurm-%j.err
