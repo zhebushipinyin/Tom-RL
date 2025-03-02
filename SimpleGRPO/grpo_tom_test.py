@@ -5,7 +5,6 @@ from datasets import load_dataset, Dataset
 from transformers import AutoTokenizer, AutoModelForCausalLM
 # from peft import LoraConfig
 from trl import GRPOConfig, GRPOTrainer
-import reward_tom as mt
 
 # Load and prep dataset
 
@@ -14,8 +13,8 @@ SYSTEM_PROMPT = """You are a helpful assistant. The assistant first thinks about
 
 # uncomment middle messages for 1-shot prompting
 def get_questions() -> Dataset:
-    data = load_dataset('parquet', data_files='clean_data/cleaned_train.parquet')['train']
-    test_data = load_dataset('parquet', data_files='clean_data/cleaned_test.parquet')['train']
+    data = load_dataset('parquet', data_files='data/cleaned_train.parquet')['train']
+    test_data = load_dataset('parquet', data_files='data/cleaned_test.parquet')['train']
     return data , test_data
 
 
@@ -65,7 +64,7 @@ def reward_func_old(response, answer):
             return 0
 
 def reward_func_(response, answer):
-    pattern = r"^<reasoning>\n.*?\n</reasoning>\n<answer>\n.*?\n</answer>\n$"
+    pattern = r"^<think>.*?</think>\s*<answer>.*?</answer>$"
     match = re.match(pattern, response, re.DOTALL | re.MULTILINE)
 
     if match:
@@ -84,13 +83,14 @@ def reward_function(prompts, completions, answer, **kwargs) -> list[float]:
     q = prompts[0][-1]['content']
     responses = [completion[0]['content'] for completion in completions]
     
-    print('-'*20, f"Question:\n{q}", f"\nAnswer:\n{answer[0]}", f"\nResponse:\n{responses[0]}", f"\nExtracted:\n{extract_xml_answer(responses[0])}")
+    #print('-'*20, f"Question:\n{q}", f"\nAnswer:\n{answer[0]}", f"\nResponse:\n{responses[0]}", f"\nExtracted:\n{extract_xml_answer(responses[0])}")
+    print('-'*20, f"\nAnswer:\n{answer[0]}", f"\nResponse:\n{responses[0]}", f"\nExtracted:\n{extract_xml_answer(responses[0])}")
     return [reward_func_(r, a) for r, a in zip(responses, answer)]
 
 
 def format_reward(completions, **kwargs):
     """Reward function that checks if the reasoning process is enclosed within <think> and </think> tags, while the final answer is enclosed within <answer> and </answer> tags."""
-    pattern = r"^<reasoning>\n.*?\n</reasoning>\n<answer>\n.*?\n</answer>\n$"
+    pattern = r"^<think>.*?</think>\s*<answer>.*?</answer>$"
     completion_contents = [completion[0]["content"] for completion in completions]
     matches = [re.match(pattern, content, re.DOTALL | re.MULTILINE) for content in completion_contents]
     return [1 if match else 0.0 for match in matches]
@@ -109,7 +109,7 @@ elif model_name =='Qwen2.5-1.5B-Instruct':
     run_name="Qwen-1.5B-GRPO-gsm8k"
 else:
     output_dir="outputs/Qwen-0.5B-GRPO-Tom"
-    run_name="Qwen-0.5B-GRPO-Tom"
+    run_name="Qwen-0.5B-GRPO-Tom-Test50"
 
 training_args = GRPOConfig(
     output_dir=output_dir,
@@ -125,15 +125,17 @@ training_args = GRPOConfig(
     per_device_train_batch_size=1,
     gradient_accumulation_steps=4,
     num_generations=8,
-    max_prompt_length=512,
-    max_completion_length=512,
+    max_prompt_length=384,
+    max_completion_length=384,
     num_train_epochs=1,
-    save_steps=100,
+    save_steps=50,
     max_grad_norm=0.1,
     report_to="wandb",
     log_on_each_node=False,
-    gradient_checkpointing=True
+    gradient_checkpointing=True,
+    eval_steps=50
 )
+
 """
 peft_config = LoraConfig(
     r=16,
