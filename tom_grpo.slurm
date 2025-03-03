@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH -J tom_rl
-#SBATCH --mem=200g
+#SBATCH --mem=300g
 #SBATCH -p HGX                    # 作业提交的分区为 DGX
 #SBATCH --nodes=1
 #SBATCH --gres=gpu:4            # 单个节点使用 1 块 GPU 卡
