@@ -84,7 +84,7 @@ def init_seed(seed=42):
     if torch.cuda.is_available():
         torch.cuda.manual_seed(seed)
 
-def process_row(row, model_answer):
+def process_row(row, model_answer, data_source: str = "exploretom"):
     """Process a single row with the model's answer.
     
     Args:
@@ -112,7 +112,8 @@ def process_row(row, model_answer):
         'processed_model_answer': processed_model_answer
     }
 
-def batch_process(df: pd.DataFrame, llm: LLM, sampling_params: SamplingParams, batch_size: int = 16) -> List[Dict[str, Any]]:
+def batch_process(df: pd.DataFrame, llm: LLM, sampling_params: SamplingParams, 
+                  batch_size: int = 16, data_source: str = "exploretom") -> List[Dict[str, Any]]:
     """Process dataframe in batches for more efficient inference.
     
     Args:
@@ -142,7 +143,7 @@ def batch_process(df: pd.DataFrame, llm: LLM, sampling_params: SamplingParams, b
         batch_results = []
         for j, (_, row) in enumerate(batch_df.iterrows()):
             model_answer = outputs[j].outputs[0].text
-            result = process_row(row, model_answer)
+            result = process_row(row, model_answer, data_source)
             batch_results.append(result)
             
         all_results.extend(batch_results)
@@ -165,13 +166,16 @@ def main(args):
     )
 
     # Load the parquet file
-    df = pd.read_parquet(args.data_dir)
+    if args.data_dir.endswith('.parquet'):
+        df = pd.read_parquet(args.data_dir)
+    else:
+        df = pd.read_csv(args.data_dir)
     
     print(f"Processing {len(df)} examples using batch processing")
     start_time = time.time()
     
     # Process in batches for more efficient inference
-    results = batch_process(df, llm, sampling_params, batch_size=args.batch_size)
+    results = batch_process(df, llm, sampling_params, batch_size=args.batch_size, data_source=args.data_source)
     
     # Extract results
     infilled_stories = [result['infilled_story'] for result in results]
@@ -240,6 +244,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Evaluation script for KK dataset")
     parser.add_argument("--data_dir", "-d", type=str, 
                         default="./data/tom/exploretom/test.parquet", help="Data directory")
+    parser.add_argument("--data_source", "-s", type=str, 
+                        default="exploretom", 
+                        choices=["exploretom", "hi_tom", "tom_i"], 
+                        help="Data source")
     parser.add_argument("--save_dir", "-s", type=str, default="./results", help="Save directory")
     parser.add_argument("--model", "-m", type=str, 
                         default='./checkpoints/GRPO_tom/Qwen-7B-IM/actor/global_step_700', 
