@@ -55,7 +55,13 @@ echo "Worker number: $worker_num"
 ########################################################
 
 export VLLM_ATTENTION_BACKEND=XFORMERS
-MODEL_PATH=Qwen/Qwen2.5-7B-Instruct-1M
+
+## MODEL_PATH=Qwen/Qwen2.5-7B-Instruct-1M
+# TODO
+# MODEL_PATH=Qwen/Qwen2.5-0.5B-Instruct
+# MODEL_PATH=Qwen/Qwen2.5-1.5B-Instruct
+# MODEL_PATH=Qwen/Qwen2.5-3B-Instruct
+MODEL_PATH=Qwen/Qwen2.5-7B-Instruct
 
 python3 -m verl.trainer.main_ppo \
     algorithm.adv_estimator=grpo \
@@ -88,7 +94,7 @@ python3 -m verl.trainer.main_ppo \
     trainer.critic_warmup=0 \
     trainer.logger=['console','wandb'] \
     trainer.project_name='GRPO_tom' \
-    trainer.experiment_name='Qwen-7B-IM' \
+    trainer.experiment_name=$(basename $MODEL_PATH) \
     trainer.n_gpus_per_node=$NUM_GPUS \
     trainer.nnodes=1 \
     trainer.default_hdfs_dir=null \
