@@ -9,14 +9,17 @@ NUM_GPUS=$(nvidia-smi --query-gpu=name --format=csv,noheader | wc -l)
 ## MODEL_PATH=Qwen/Qwen2.5-7B-Instruct-1M
 # TODO
 # MODEL_PATH=Qwen/Qwen2.5-0.5B-Instruct
-MODEL_PATH=Qwen/Qwen2.5-1.5B-Instruct
+# MODEL_PATH=Qwen/Qwen2.5-1.5B-Instruct
 # MODEL_PATH=Qwen/Qwen2.5-3B-Instruct
 # MODEL_PATH=Qwen/Qwen2.5-7B-Instruct
+MODEL_PATH=deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B
 
+# data.train_files=$HOME/data/tom/explore_tom/train_5k.parquet \
+# data.val_files=$HOME/data/tom/explore_tom/test.parquet \
 python3 -m verl.trainer.main_ppo \
     algorithm.adv_estimator=grpo \
-    data.train_files=$HOME/data/tom/explore_tom/train_5k.parquet \
-    data.val_files=$HOME/data/tom/explore_tom/test.parquet \
+    data.train_files=$HOME/data/tom/explore_tom/train_reason.parquet \
+    data.val_files=$HOME/data/tom/explore_tom/test_reason.parquet \
     data.train_batch_size=8 \
     data.val_batch_size=8 \
     data.max_prompt_length=768 \
