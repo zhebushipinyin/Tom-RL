@@ -33,9 +33,11 @@ def make_prefix(story, question, template_type='base'):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--local_dir', default='./data/tom/explore_tom')
+    parser.add_argument('--local_dir', default='./data/tom/exploretom')
     parser.add_argument('--hdfs_dir', default=None)
-    parser.add_argument('--template_type', type=str, default='dpsk-reasoning', choices=['base', 'qwen-instruct', 'dpsk-reasoning'])
+    # random seed
+    parser.add_argument('--seed', type=int, default=42)
+    parser.add_argument('--template_type', type=str, default='qwen-instruct', choices=['base', 'qwen-instruct', 'dpsk-reasoning'])
 
     args = parser.parse_args()
 
@@ -45,7 +47,7 @@ if __name__ == '__main__':
     dataset = datasets.load_dataset(data_source)
     
     # Since ExploreToM only has a train split, we'll split it 80/20
-    train_test_split = dataset['train'].train_test_split(test_size=0.2, seed=42)
+    train_test_split = dataset['train'].train_test_split(test_size=0.2, seed=args.seed)
     train_dataset = train_test_split['train']
     test_dataset = train_test_split['test']
 
@@ -61,7 +63,6 @@ if __name__ == '__main__':
             
             # Get the expected answer as ground truth
             solution = example['expected_answer']
-            
             # Create extra_info dictionary with all the other fields
             extra_info = {
                 'split': split,
@@ -99,6 +100,9 @@ if __name__ == '__main__':
             return data
 
         return process_fn
+    print(f'len(train_dataset) before filtering: {len(train_dataset)}')
+    train_dataset = train_dataset.filter(lambda x: x['qprop=non_unique_mental_state'] == 0)
+    print(f'len(train_dataset) after filtering: {len(train_dataset)}')
 
     train_dataset = train_dataset.map(function=make_map_fn('train'), with_indices=True)
     test_dataset = test_dataset.map(function=make_map_fn('test'), with_indices=True)
@@ -109,8 +113,8 @@ if __name__ == '__main__':
     # Create local directory if not exists
     os.makedirs(local_dir, exist_ok=True)
 
-    train_dataset.to_parquet(os.path.join(local_dir, 'train_reason.parquet'))
-    test_dataset.to_parquet(os.path.join(local_dir, 'test_reason.parquet'))
+    train_dataset.to_parquet(os.path.join(local_dir, 'train_pure.parquet'))
+    test_dataset.to_parquet(os.path.join(local_dir, 'test.parquet'))
 
     if hdfs_dir is not None:
         makedirs(hdfs_dir)
