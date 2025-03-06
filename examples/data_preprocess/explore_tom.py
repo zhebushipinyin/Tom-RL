@@ -26,15 +26,18 @@ def make_prefix(story, question, template_type='base'):
         prefix = f"""The user asks a question about a story, and the Assistant answers it. The assistant first thinks about the reasoning process in the mind and then provides the user with the final answer. The reasoning process and answer are enclosed within <think> </think> and <answer> </answer> tags, respectively, i.e., <think> reasoning process here </think><answer> answer here </answer>. Now the user asks you to solve a theory of mind reasoning problem. After thinking, when you finally reach a conclusion, clearly state your answer within <answer> </answer> tags.\n\nUser:{quiz}\nAssistant: <think>"""
     elif template_type == 'qwen-instruct':
         prefix = f"""<|im_start|>system\nYou are a helpful assistant. The assistant first thinks about the reasoning process in the mind and then provides the user with the answer. The reasoning process and answer are enclosed within <think> </think> and <answer> </answer> tags, respectively, i.e., <think> reasoning process here </think><answer> answer here </answer>. Now the user asks you to solve a theory of mind reasoning problem. After thinking, when you finally reach a conclusion, clearly state your answer within <answer> </answer> tags.\n<|im_end|>\n<|im_start|>user\n{quiz}\n<|im_end|>\n<|im_start|>assistant\n<think>"""
-    
+    elif template_type == 'dpsk-reasoning':
+        prefix = "<｜begin▁of▁sentence｜><｜User｜>You are a helpful assistant. The assistant first thinks about the reasoning process in the mind and then provides the user with the answer. The reasoning process and answer are enclosed within <think> </think> and <answer> </answer> tags, respectively, i.e., <think> reasoning process here </think><answer> answer here </answer>. Now the user asks you to solve a theory of mind reasoning problem. After thinking, when you finally reach a conclusion, clearly state your answer within <answer> </answer> tags.<｜Assistant｜><think>"
     return prefix
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--local_dir', default='./data/tom/explore_tom')
+    parser.add_argument('--local_dir', default='./data/tom/exploretom')
     parser.add_argument('--hdfs_dir', default=None)
-    parser.add_argument('--template_type', type=str, default='qwen-instruct', choices=['base', 'qwen-instruct'])
+    # random seed
+    parser.add_argument('--seed', type=int, default=42)
+    parser.add_argument('--template_type', type=str, default='qwen-instruct', choices=['base', 'qwen-instruct', 'dpsk-reasoning'])
 
     args = parser.parse_args()
 
@@ -44,7 +47,7 @@ if __name__ == '__main__':
     dataset = datasets.load_dataset(data_source)
     
     # Since ExploreToM only has a train split, we'll split it 80/20
-    train_test_split = dataset['train'].train_test_split(test_size=0.2, seed=42)
+    train_test_split = dataset['train'].train_test_split(test_size=0.2, seed=args.seed)
     train_dataset = train_test_split['train']
     test_dataset = train_test_split['test']
 
@@ -60,7 +63,6 @@ if __name__ == '__main__':
             
             # Get the expected answer as ground truth
             solution = example['expected_answer']
-            
             # Create extra_info dictionary with all the other fields
             extra_info = {
                 'split': split,
@@ -98,6 +100,9 @@ if __name__ == '__main__':
             return data
 
         return process_fn
+    print(f'len(train_dataset) before filtering: {len(train_dataset)}')
+    train_dataset = train_dataset.filter(lambda x: x['qprop=non_unique_mental_state'] == 0)
+    print(f'len(train_dataset) after filtering: {len(train_dataset)}')
 
     train_dataset = train_dataset.map(function=make_map_fn('train'), with_indices=True)
     test_dataset = test_dataset.map(function=make_map_fn('test'), with_indices=True)
@@ -108,7 +113,7 @@ if __name__ == '__main__':
     # Create local directory if not exists
     os.makedirs(local_dir, exist_ok=True)
 
-    train_dataset.to_parquet(os.path.join(local_dir, 'train.parquet'))
+    train_dataset.to_parquet(os.path.join(local_dir, 'train_pure.parquet'))
     test_dataset.to_parquet(os.path.join(local_dir, 'test.parquet'))
 
     if hdfs_dir is not None:
