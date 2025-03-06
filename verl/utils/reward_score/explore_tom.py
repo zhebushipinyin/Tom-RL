@@ -1,6 +1,35 @@
 import re
 from typing import Dict, Tuple, Optional, Union, Any
 
+# for dpsk
+# def extract_solution(solution_str: str) -> Tuple[Optional[str], str]:
+#     """Extracts the final answer from the model's response string.
+    
+#     Args:
+#         solution_str: Raw response string from the language model
+        
+#     Returns:
+#         Tuple containing (extracted_answer, processed_string)
+#     """
+#     # Split response to isolate assistant output
+#     if "<｜Assistant｜>" in solution_str:
+#         processed_str = solution_str.split("<｜Assistant｜>", 1)[1]
+#     else:
+#         print("[Error] Failed to locate model response header")
+#         return None, solution_str
+
+#     # Extract final answer using XML-style tags
+#     answer_pattern = r'<answer>(.*?)</answer>'
+#     matches = list(re.finditer(answer_pattern, processed_str, re.DOTALL))
+    
+#     if not matches:
+#         print("[Error] No valid answer tags found")
+#         return None, processed_str
+        
+#     final_answer = matches[-1].group(1).strip()
+#     return final_answer, processed_str
+
+# for qwen
 def extract_solution(solution_str: str) -> Tuple[Optional[str], str]:
     """Extracts the final answer from the model's response string.
     
@@ -29,6 +58,7 @@ def extract_solution(solution_str: str) -> Tuple[Optional[str], str]:
         
     final_answer = matches[-1].group(1).strip()
     return final_answer, processed_str
+
 
 def normalize_answer(answer: str) -> str:
     """Normalizes the answer text for better comparison.
