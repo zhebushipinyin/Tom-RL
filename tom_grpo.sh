@@ -10,8 +10,8 @@ NUM_GPUS=$(nvidia-smi --query-gpu=name --format=csv,noheader | wc -l)
 # TODO
 # MODEL_PATH=Qwen/Qwen2.5-0.5B-Instruct
 # MODEL_PATH=Qwen/Qwen2.5-1.5B-Instruct
-MODEL_PATH=Qwen/Qwen2.5-3B-Instruct
-# MODEL_PATH=Qwen/Qwen2.5-7B-Instruct
+# MODEL_PATH=Qwen/Qwen2.5-3B-Instruct
+MODEL_PATH=Qwen/Qwen2.5-7B-Instruct
 # MODEL_PATH=deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B
 
 lr=3e-7
