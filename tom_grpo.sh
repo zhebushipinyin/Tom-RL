@@ -19,7 +19,7 @@ python3 -m verl.trainer.main_ppo \
     algorithm.adv_estimator=grpo \
     data.train_files=$HOME/data/tom/explore_tom/explore_tom_train_600.parquet \
     data.val_files=$HOME/data/tom/explore_tom/hi_tom_test.parquet \
-    data.train_batch_size=16 \
+    data.train_batch_size=8 \
     data.val_batch_size=16 \
     data.max_prompt_length=768 \
     data.max_response_length=2048 \
@@ -52,6 +52,6 @@ python3 -m verl.trainer.main_ppo \
     trainer.default_hdfs_dir=null \
     trainer.save_freq=50 \
     trainer.test_freq=10 \
-    trainer.total_epochs=1 $@ 2>&1 | tee tom_grpo.log
+    trainer.total_epochs=2 $@ 2>&1 | tee tom_grpo.log
 
 # trainer.default_local_dir=xxx \

@@ -160,9 +160,11 @@ def check_answer_correctness(predicted_answer: str, ground_truth: str) -> Tuple[
     
     # Check if prediction is in list of acceptable answers
     # This could be extended with domain-specific lists of equivalent answers
-    
+    if norm_pred in norm_truth:
+        print("  Answer validation: MATCH (contains correct choice: '{norm_pred}')")
+        return False, -1.5
     print("  Answer validation: MISMATCH")
-    return False, -1.5
+    return False, -2.0
 
 def compute_score(solution_str: str, 
                  ground_truth: Union[Dict[str, Any], str],
