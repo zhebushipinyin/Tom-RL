@@ -10,7 +10,7 @@ import pandas as pd
 from verl.utils.hdfs_io import copy, makedirs
 
 
-def make_prefix(story, question, template_type='base'):
+def make_prefix(story, question, template_type='base', add_hint=False):
     """
     Format the prompt with appropriate instructions based on template type.
     
@@ -28,7 +28,10 @@ def make_prefix(story, question, template_type='base'):
         prefix = f"""The user asks a question about a story, and the Assistant answers it. The assistant first thinks about the reasoning process in the mind and then provides the user with the final answer. The reasoning process and answer are enclosed within <think> </think> and <answer> </answer> tags, respectively, i.e., <think> reasoning process here </think><answer> answer here </answer>. Now the user asks you to solve a theory of mind reasoning problem. After thinking, when you finally reach a conclusion, clearly state your answer within <answer> </answer> tags.\n\nUser:{quiz}\nAssistant: <think>"""
     # TODO add hints
     elif template_type == 'qwen-instruct':
-        prefix = f"""<|im_start|>system\nYou are a helpful assistant. The assistant first thinks about the reasoning process in the mind and then provides the user with the answer. The reasoning process and answer are enclosed within <think> </think> and <answer> </answer> tags, respectively, i.e., <think> reasoning process here </think><answer> answer here </answer>. Now the user asks you to solve a theory of mind reasoning problem. After thinking, when you finally reach a conclusion, clearly state your answer within <answer> </answer> tags.\n<|im_end|>\n<|im_start|>user\n{quiz}\n<|im_end|>\n<|im_start|>assistant\n<think>"""
+        if not add_hint:
+            prefix = f"""<|im_start|>system\nYou are a helpful assistant. The assistant first thinks about the reasoning process in the mind and then provides the user with the answer. The reasoning process and answer are enclosed within <think> </think> and <answer> </answer> tags, respectively, i.e., <think> reasoning process here </think><answer> answer here </answer>. Now the user asks you to solve a theory of mind reasoning problem. After thinking, when you finally reach a conclusion, clearly state your answer within <answer> </answer> tags.\n<|im_end|>\n<|im_start|>user\n{quiz}\n<|im_end|>\n<|im_start|>assistant\n<think>"""
+        else:
+            prefix = f"""<|im_start|>system\nYou are a helpful assistant. The assistant first thinks about the reasoning process in the mind and then provides the user with the answer. The reasoning process and answer are enclosed within <think> </think> and <answer> </answer> tags, respectively, i.e., <think> reasoning process here </think><answer> answer here </answer>. Now the user asks you to solve a theory of mind reasoning problem. After thinking, when you finally reach a conclusion, clearly state your answer within <answer> </answer> tags.\nNote: You should assume the following.\n(1) An agent witnesses everything and every movement before exiting a room.\n(2) An agent A can infer another agent B's mental state only if A and B have been in the same room, or have private or public interactions.\n<|im_end|>\n<|im_start|>user\n{quiz}\n<|im_end|>\n<|im_start|>assistant\n<think>"""
     elif template_type == 'dpsk-reasoning':
         prefix = "<｜begin▁of▁sentence｜><｜User｜>You are a helpful assistant. The assistant first thinks about the reasoning process in the mind and then provides the user with the answer. The reasoning process and answer are enclosed within <think> </think> and <answer> </answer> tags, respectively, i.e., <think> reasoning process here </think><answer> answer here </answer>. Now the user asks you to solve a theory of mind reasoning problem. After thinking, when you finally reach a conclusion, clearly state your answer within <answer> </answer> tags.<｜Assistant｜><think>"
     return prefix
@@ -43,7 +46,8 @@ def train_make_map_fn(data_source, story_type='story_structure'):
         prompt = make_prefix(
             story=story, 
             question=example['question'],
-            template_type=args.template_type
+            template_type=args.template_type,
+            add_hint=args.add_hint
         )
         
         # Get the expected answer as ground truth
@@ -83,7 +87,8 @@ def test_make_map_fn(data_source):
         question = make_prefix(
             story=example['story'], 
             question=example['question_old'],
-            template_type=args.template_type
+            template_type=args.template_type,
+            add_hint=args.add_hint
         )
         solution = example['answer']
         return {
@@ -114,6 +119,8 @@ if __name__ == '__main__':
                         choices=['base', 'qwen-instruct', 'dpsk-reasoning'])
     parser.add_argument('--use_both_stories', action='store_true', 
                         help='Generate two data points for each example, one using story_structure and one using infilled_story')
+    parser.add_argument('--add_hint', action='store_true', 
+                        help='Add hint to the prompt')
 
     args = parser.parse_args()
 
@@ -145,17 +152,26 @@ if __name__ == '__main__':
         # Shuffle the combined dataset
         train_dataset = train_dataset.shuffle(seed=args.seed)
         print('len of train_dataset (both stories):', len(train_dataset))
-        train_dataset.to_parquet(os.path.join(local_dir, 'explore_tom_train_600_both.parquet'))
+        if args.add_hint:
+            train_dataset.to_parquet(os.path.join(local_dir, 'explore_tom_train_600_both_hint.parquet'))
+        else:
+            train_dataset.to_parquet(os.path.join(local_dir, 'explore_tom_train_600_both.parquet'))
     else:
         train_dataset = train_dataset.map(
             function=train_make_map_fn('explore_tom', 'story_structure'), 
             with_indices=True
         )
         print('len of train_dataset:', len(train_dataset))
-        train_dataset.to_parquet(os.path.join(local_dir, 'explore_tom_train_600.parquet'))
+        if args.add_hint:
+            train_dataset.to_parquet(os.path.join(local_dir, 'explore_tom_train_600_hint.parquet'))
+        else:
+            train_dataset.to_parquet(os.path.join(local_dir, 'explore_tom_train_600.parquet'))
     
     test_dataset = test_dataset.map(function=test_make_map_fn('hi_tom'), with_indices=True)
-    test_dataset.to_parquet(os.path.join(local_dir, 'hi_tom_test.parquet'))
+    if args.add_hint:
+        test_dataset.to_parquet(os.path.join(local_dir, 'hi_tom_test_hint.parquet'))
+    else:
+        test_dataset.to_parquet(os.path.join(local_dir, 'hi_tom_test.parquet'))
 
 
     # Create local directory if not exists
