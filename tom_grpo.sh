@@ -8,31 +8,30 @@ NUM_GPUS=$(nvidia-smi --query-gpu=name --format=csv,noheader | wc -l)
 
 ## MODEL_PATH=Qwen/Qwen2.5-7B-Instruct-1M
 # TODO
-MODEL_PATH=Qwen/Qwen2.5-0.5B-Instruct
+# MODEL_PATH=Qwen/Qwen2.5-0.5B-Instruct
 # MODEL_PATH=Qwen/Qwen2.5-1.5B-Instruct
-# MODEL_PATH=Qwen/Qwen2.5-3B-Instruct
+MODEL_PATH=Qwen/Qwen2.5-3B-Instruct
 # MODEL_PATH=Qwen/Qwen2.5-7B-Instruct
 # MODEL_PATH=deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B
 
-# data.train_files=$HOME/data/tom/explore_tom/train_5k.parquet \
-# data.val_files=$HOME/data/tom/explore_tom/test.parquet \
+lr=3e-7
 python3 -m verl.trainer.main_ppo \
     algorithm.adv_estimator=grpo \
-    data.train_files=$HOME/data/tom/explore_tom/yilong/cleaned_train_ft_with_structure_384.parquet \
-    data.val_files=$HOME/data/tom/explore_tom/yilong/test_data_all.parquet \
+    data.train_files=$HOME/data/tom/explore_tom/explore_tom_train_600.parquet \
+    data.val_files=$HOME/data/tom/explore_tom/hi_tom_test.parquet \
     data.train_batch_size=16 \
     data.val_batch_size=16 \
     data.max_prompt_length=768 \
     data.max_response_length=2048 \
     actor_rollout_ref.model.path=$MODEL_PATH\
-    actor_rollout_ref.actor.optim.lr=3e-7 \
+    actor_rollout_ref.actor.optim.lr=$lr \
     actor_rollout_ref.model.use_remove_padding=True \
     actor_rollout_ref.actor.ppo_mini_batch_size=256 \
     actor_rollout_ref.actor.ppo_micro_batch_size=64 \
     actor_rollout_ref.actor.use_kl_loss=True \
     actor_rollout_ref.actor.kl_loss_coef=0.001 \
     actor_rollout_ref.actor.kl_loss_type=low_var_kl \
-    actor_rollout_ref.model.enable_gradient_checkpointing=True \
+    actor_rollout_ref.model.enable_gradient_checkpointing=False \
     actor_rollout_ref.actor.fsdp_config.param_offload=True \
     actor_rollout_ref.actor.fsdp_config.grad_offload=True \
     actor_rollout_ref.actor.fsdp_config.optimizer_offload=True \
@@ -46,8 +45,8 @@ python3 -m verl.trainer.main_ppo \
     algorithm.kl_ctrl.kl_coef=0.001 \
     trainer.critic_warmup=0 \
     trainer.logger=['console','wandb'] \
-    trainer.project_name='GRPO_tom' \
-    trainer.experiment_name=$(basename $MODEL_PATH) \
+    trainer.project_name='GRPO_tom_new' \
+    trainer.experiment_name="$(basename $MODEL_PATH)-$lr" \
     trainer.n_gpus_per_node=$NUM_GPUS \
     trainer.nnodes=1 \
     trainer.default_hdfs_dir=null \

@@ -32,7 +32,7 @@ def _select_rm_score_fn(data_source):
         return countdown.compute_score
     elif "kk" in data_source:
         return kk.compute_score
-    elif "explore_tom" in data_source or "ExploreToM" in data_source:
+    elif "explore_tom" in data_source or "ExploreToM" in data_source or "hi_tom" in data_source:
         return explore_tom.compute_score
     else:
         raise NotImplementedError
