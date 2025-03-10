@@ -160,8 +160,8 @@ def check_answer_correctness(predicted_answer: str, ground_truth: str) -> Tuple[
     
     # Check if prediction is in list of acceptable answers
     # This could be extended with domain-specific lists of equivalent answers
-    if norm_pred in norm_truth:
-        print("  Answer validation: MATCH (contains correct choice: '{norm_pred}')")
+    if norm_pred in norm_truth or norm_truth in norm_pred:
+        print(f"  Answer validation: MATCH (contains correct choice: {norm_pred}({norm_truth}))")
         return False, -1.5
     print("  Answer validation: MISMATCH")
     return False, -2.0
