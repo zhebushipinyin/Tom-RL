@@ -11,6 +11,9 @@
 #SBATCH -o logs/slurm-%j.out
 #SBATCH --qos=lv0b               # 作业使用的 QoS 为 lv0b
 
+source ~/anaconda3/etc/profile.d/conda.sh
+conda activate logic
+
 set -x
 
 ray stop
