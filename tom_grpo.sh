@@ -13,7 +13,7 @@ enable_gradient_checkpointing=True
 use_hints=(True False)
 train_sources=("hi_tom" "explore_tom")
 # model_names=("Qwen/Qwen2.5-7B-Instruct-1M" "Qwen/Qwen2.5-7B-Instruct" "Qwen/Qwen2.5-3B-Instruct" "Qwen/Qwen2.5-1.5B-Instruct" "Qwen/Qwen2.5-0.5B-Instruct")
-model_names=("Qwen/Qwen2.5-0.5B-Instruct" "Qwen/Qwen2.5-1.5B-Instruct" "Qwen/Qwen2.5-3B-Instruct" "Qwen/Qwen2.5-7B-Instruct" )
+model_names=("Qwen/Qwen2.5-0.5B-Instruct" "Qwen/Qwen2.5-1.5B-Instruct" "Qwen/Qwen2.5-3B-Instruct" "Qwen/Qwen2.5-7B-Instruct" "Qwen/Qwen2.5-7B-Instruct-1M")
 lrs=(3e-7 4e-7 5e-7)
 
 # model_names=("Qwen/Qwen2.5-7B-Instruct")
@@ -81,7 +81,7 @@ do
                     algorithm.kl_ctrl.kl_coef=0.001 \
                     trainer.critic_warmup=0 \
                     trainer.logger=['console','wandb'] \
-                    trainer.project_name='GRPO_tom_new' \
+                    trainer.project_name='GRPO_tom_lambda' \
                     trainer.experiment_name="$(basename $model_name)-$lr-$train_source-$use_hint" \
                     trainer.n_gpus_per_node=$NUM_GPUS \
                     trainer.nnodes=1 \
