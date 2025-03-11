@@ -27,8 +27,7 @@ train_batch_size=8
 enable_gradient_checkpointing=True
 
 use_hints=(True False)
-# model_names=("Qwen/Qwen2.5-7B-Instruct-1M" "Qwen/Qwen2.5-7B-Instruct" "Qwen/Qwen2.5-3B-Instruct" "Qwen/Qwen2.5-1.5B-Instruct" "Qwen/Qwen2.5-0.5B-Instruct")
-model_names=("Qwen/Qwen2.5-0.5B-Instruct" "Qwen/Qwen2.5-1.5B-Instruct" "Qwen/Qwen2.5-3B-Instruct" "Qwen/Qwen2.5-7B-Instruct" )
+model_names=("Qwen/Qwen2.5-7B-Instruct-1M" "Qwen/Qwen2.5-7B-Instruct" "Qwen/Qwen2.5-3B-Instruct" "Qwen/Qwen2.5-1.5B-Instruct" "Qwen/Qwen2.5-0.5B-Instruct")
 lrs=(3e-7 4e-7 5e-7)
 num_epochs=2
 
@@ -39,16 +38,18 @@ num_epochs=2
 
 for model_name in ${model_names[@]}
 do
+    # 提取 "Qwen/Qwen2.5-7B-Instruct-1M" 中的 7B
+    model_size=$(echo $model_name | grep -o "[0-9.]\+B" | head -1)
     for lr in ${lrs[@]}
     do
         for use_hint in ${use_hints[@]}
         do
             if [ $use_hint == "True" ]; then
-                data_train_files=$HOME/data/tom/explore_tom_600_both_hint.parquet
-                test_files=$HOME/data/tom/hi_tom_hint.parquet
+                data_train_files=$HOME/data/tom/hi_tom_train_2000_hint.parquet
+                test_files=$HOME/data/tom/hi_tom_explore_tom_test_hint.parquet
             else
-                data_train_files=$HOME/data/tom/explore_tom_600_both.parquet
-                test_files=$HOME/data/tom/hi_tom_hint.parquet
+                data_train_files=$HOME/data/tom/hi_tom_train_2000.parquet
+                test_files=$HOME/data/tom/hi_tom_explore_tom_test.parquet
             fi
 
             python3 -m verl.trainer.main_ppo \
@@ -81,8 +82,8 @@ do
                 algorithm.kl_ctrl.kl_coef=0.001 \
                 trainer.critic_warmup=0 \
                 trainer.logger=['console','wandb'] \
-                trainer.project_name='GRPO_tom_new' \
-                trainer.experiment_name="$(basename $model_name)-$lr-$train_source-$use_hint" \
+                trainer.project_name='GRPO_tom_lambda' \
+                trainer.experiment_name="$(basename $model_name)-$lr-$use_hint" \
                 trainer.n_gpus_per_node=$NUM_GPUS \
                 trainer.nnodes=1 \
                 trainer.default_hdfs_dir=null \
