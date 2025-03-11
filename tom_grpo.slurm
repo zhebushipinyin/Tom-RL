@@ -4,12 +4,12 @@
 #SBATCH --mem=300g
 #SBATCH -p HGX,DGX                    
 #SBATCH --nodes=1
-#SBATCH --gres=gpu:2            
+#SBATCH --gres=gpu:4            
 #SBATCH --cpus-per-task=64
 #SBATCH -t 40:00:00
 #SBATCH -e logs/slurm-%j.err
 #SBATCH -o logs/slurm-%j.out
-#SBATCH --qos=lv1              
+#SBATCH --qos=lv1           
 
 source ~/anaconda3/etc/profile.d/conda.sh
 conda activate logic
