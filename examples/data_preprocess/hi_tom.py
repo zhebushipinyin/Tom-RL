@@ -127,9 +127,9 @@ if __name__ == '__main__':
 
     # 按照 question_order 拆分数据，question_order 为 0-1-2-3-4
     # order 为 4 的为test set（600条），其余的2400条，拆出400条，也作为测试集，这样训练集 2000 条，测试集 1000 条
-    train_dataset = pd.read_csv(data_source)
-    train_dataset = train_dataset[train_dataset['question_order'] != 4]
-    test_dataset = train_dataset[train_dataset['question_order'] == 4].reset_index(drop=True)
+    dataset = pd.read_csv(data_source)
+    train_dataset = dataset[dataset['question_order'] != 4]
+    test_dataset = dataset[dataset['question_order'] == 4].reset_index(drop=True)
     train_temp = train_dataset.sample(frac=1, random_state=args.seed).reset_index(drop=True)
     additional_test = train_temp.iloc[-400:].reset_index(drop=True)
     train_temp = train_temp.iloc[:2000].reset_index(drop=True)

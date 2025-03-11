@@ -88,7 +88,7 @@ do
                 trainer.default_hdfs_dir=null \
                 trainer.save_freq=50 \
                 trainer.test_freq=10 \
-                trainer.total_epochs=$num_epochs $@ 2>&1 | tee tom_grpo_$(basename $model_name)_${lr}_${train_source}_${use_hint}.log
+                trainer.total_epochs=$num_epochs $@ 2>&1 | tee logs/tom_grpo_$(basename $model_name)_${lr}_${use_hint}.log
         done
     done
 done
