@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#SBATCH -J tom_rl
-#SBATCH --mem=300g
+#SBATCH -J tom
+#SBATCH --mem=512g
 #SBATCH -p HGX,DGX                    
 #SBATCH --nodes=1
 #SBATCH --gres=gpu:4            
