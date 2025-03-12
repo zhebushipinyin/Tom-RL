@@ -11,7 +11,7 @@ from trl import GRPOConfig, GRPOTrainer
 
 # uncomment middle messages for 1-shot prompting
 def get_questions() -> Dataset:
-    data = load_dataset('parquet', data_files='data/train/ToM_train_single_question.parquet')['train']
+    data = load_dataset('parquet', data_files='data/train/ToM_train_wh.parquet')['train']
     return data
 
 
@@ -93,8 +93,8 @@ elif model_name =='Qwen2.5-1.5B-Instruct':
     output_dir="outputs/Qwen-1.5B-GRPO"
     run_name="Qwen-1.5B-GRPO-gsm8k"
 else:
-    output_dir="outputs/Qwen-0.5B-GRPO-ToM-SQ"
-    run_name="Qwen-0.5B-GRPO-ToM-SQ"
+    output_dir="outputs/Qwen-0.5B-GRPO-ToM-hitom"
+    run_name="Qwen-0.5B-GRPO-ToM-hitom"
 
 training_args = GRPOConfig(
     output_dir=output_dir,
