@@ -82,7 +82,7 @@ do
                 algorithm.kl_ctrl.kl_coef=0.001 \
                 trainer.critic_warmup=0 \
                 trainer.logger=['console','wandb'] \
-                trainer.project_name='GRPO_tom_lambda_0312' \
+                trainer.project_name='reinforce_tom_lambda' \
                 trainer.experiment_name="$(basename $model_name)-$lr-$use_hint" \
                 trainer.n_gpus_per_node=$NUM_GPUS \
                 trainer.nnodes=1 \
