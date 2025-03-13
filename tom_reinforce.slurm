@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH -J tom
+#SBATCH -J r++
 #SBATCH --mem=768g
 #SBATCH -p HGX,DGX                    
 #SBATCH --nodes=1
@@ -38,8 +38,6 @@ num_epochs=2
 
 for model_name in ${model_names[@]}
 do
-    # 提取 "Qwen/Qwen2.5-7B-Instruct-1M" 中的 7B
-    model_size=$(echo $model_name | grep -o "[0-9.]\+B" | head -1)
     for lr in ${lrs[@]}
     do
         for use_hint in ${use_hints[@]}
@@ -53,7 +51,7 @@ do
             fi
 
             python3 -m verl.trainer.main_ppo \
-                algorithm.adv_estimator=grpo \
+                algorithm.adv_estimator=reinforce_plus_plus \
                 data.train_files=$data_train_files \
                 data.val_files=$test_files \
                 data.train_batch_size=$train_batch_size \
@@ -76,13 +74,13 @@ do
                 actor_rollout_ref.rollout.tensor_model_parallel_size=1 \
                 actor_rollout_ref.rollout.name=vllm \
                 actor_rollout_ref.rollout.gpu_memory_utilization=0.8 \
-                actor_rollout_ref.rollout.n=16 \
+                actor_rollout_ref.rollout.n=8 \
                 actor_rollout_ref.ref.log_prob_micro_batch_size=160 \
                 actor_rollout_ref.ref.fsdp_config.param_offload=True \
                 algorithm.kl_ctrl.kl_coef=0.001 \
                 trainer.critic_warmup=0 \
                 trainer.logger=['console','wandb'] \
-                trainer.project_name='GRPO_tom_lambda_0312' \
+                trainer.project_name='reinforce_tom_lambda' \
                 trainer.experiment_name="$(basename $model_name)-$lr-$use_hint" \
                 trainer.n_gpus_per_node=$NUM_GPUS \
                 trainer.nnodes=1 \
