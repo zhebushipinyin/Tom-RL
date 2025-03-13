@@ -77,7 +77,9 @@ def normalize_answer(answer: str) -> str:
     
     # Remove punctuation that doesn't affect meaning
     normalized = re.sub(r'[.,;:!?]', '', normalized)
-    
+
+    # _ => ' '
+    normalized = re.sub(r'_', ' ', normalized)
     return normalized
 
 def validate_response_structure(processed_str: str) -> bool:
@@ -122,7 +124,58 @@ def validate_response_structure(processed_str: str) -> bool:
 
     return validation_passed
 
+# (-2, -1.5, 2)
+# def check_answer_correctness(predicted_answer: str, ground_truth: str) -> Tuple[bool, float]:
+
+#     # ans_pattern = r".*?" + re.escape(norm_answer) + r"\s*\b$"
+
+#     """Checks if the predicted answer matches the ground truth.
+    
+#     Args:
+#         predicted_answer: The answer extracted from model's response
+#         ground_truth: The ground truth answer
+        
+#     Returns:
+#         Tuple containing (is_correct, score)
+#     """
+#     print("\n[Answer Validation]")
+#     print(f"  Ground truth: '{ground_truth}'")
+#     print(f"  Predicted: '{predicted_answer}'")
+    
+#     # Normalize both answers for better comparison
+#     norm_pred = normalize_answer(predicted_answer)
+#     norm_truth = normalize_answer(ground_truth)
+    
+#     print(f"  Normalized ground truth: '{norm_truth}'")
+#     print(f"  Normalized prediction: '{norm_pred}'")
+    
+#     # Check exact match after normalization
+#     if norm_pred == norm_truth:
+#         print("  Answer validation: EXACT MATCH")
+#         return True, 2.0
+    
+#     # Check if ground truth is a choice and prediction contains the correct choice
+#     if ' / ' in ground_truth:
+#         choices = [normalize_answer(choice) for choice in ground_truth.split(' / ')]
+#         print(f"  Multiple choice options: {choices}")
+        
+#         for choice in choices:
+#             if choice in norm_pred:
+#                 print(f"  Answer validation: MATCH (contains correct choice: '{choice}')")
+#                 return True, 2.0
+    
+#     # Check if prediction is in list of acceptable answers
+#     # This could be extended with domain-specific lists of equivalent answers
+#     if norm_pred in norm_truth or norm_truth in norm_pred:
+#         print(f"  Answer validation: Partial MATCH (contains correct choice: {norm_pred}({norm_truth}))")
+#         return False, -1.5
+#     print("  Answer validation: MISMATCH")
+#     return False, -2.0
+
 def check_answer_correctness(predicted_answer: str, ground_truth: str) -> Tuple[bool, float]:
+
+    # ans_pattern = r".*?" + re.escape(norm_answer) + r"\s*\b$"
+
     """Checks if the predicted answer matches the ground truth.
     
     Args:
@@ -145,24 +198,14 @@ def check_answer_correctness(predicted_answer: str, ground_truth: str) -> Tuple[
     
     # Check exact match after normalization
     if norm_pred == norm_truth:
-        print("  Answer validation: EXACT MATCH")
+        print("  Answer validation: EXACT MATCH with strict format")
         return True, 2.0
     
-    # Check if ground truth is a choice and prediction contains the correct choice
-    if ' / ' in ground_truth:
-        choices = [normalize_answer(choice) for choice in ground_truth.split(' / ')]
-        print(f"  Multiple choice options: {choices}")
-        
-        for choice in choices:
-            if choice in norm_pred:
-                print(f"  Answer validation: MATCH (contains correct choice: '{choice}')")
-                return True, 2.0
+    ans_pattern = r".*?" + re.escape(norm_truth) + r"\s*\b$"
+    if re.match(ans_pattern, norm_pred):
+        print("  Answer validation: EXACT MATCH with loose format")
+        return True, 1.5
     
-    # Check if prediction is in list of acceptable answers
-    # This could be extended with domain-specific lists of equivalent answers
-    if norm_pred in norm_truth or norm_truth in norm_pred:
-        print(f"  Answer validation: Partial MATCH (contains correct choice: {norm_pred}({norm_truth}))")
-        return False, -1.5
     print("  Answer validation: MISMATCH")
     return False, -2.0
 
@@ -235,7 +278,11 @@ if __name__ == "__main__":
         },
         {
             "ground_truth": "yes",
-            "model_response": "Assistant: <think>Based on the story, Isabella was directly involved in the festival marketing strategy discussions and contributed her ideas. She clearly has knowledge about these strategies.</think><answer>Yes</answer>"
+            "model_response": "Assistant: <think>Based on the story, Isabella was directly involved in the festival marketing strategy discussions and contributed ,her ideas. She clearly has knowledge about these strategies.</think><answer>Yes</answer>"
+        }, 
+        {
+            "ground_truth": "green_pantry",
+            "model_response": "Assistant: <think></think><answer>Emma thinks Aria thinks Isabella thinks Ethan thinks the tangerine is in the green pantry.</answer>"
         }
     ]
     
