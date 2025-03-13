@@ -46,7 +46,7 @@ def normalize_answer(answer: str) -> str:
     Returns:
         Normalized answer text
     """
-    # Convert to lowercase
+    # Convert to lowercase  
     normalized = answer.lower()
     # Remove extra whitespace
     normalized = re.sub(r'\s+', ' ', normalized).strip()
@@ -69,7 +69,7 @@ def reward_func_(response, answer):
         count = response.count(tag_str)
         if count == expected_count:
             counts +=1
-    if count == 2:
+    if counts == 2:
         match = re.match(pattern, response, re.DOTALL | re.MULTILINE)
         if match:
             response_ = extract_xml_answer(response)
@@ -81,7 +81,8 @@ def reward_func_(response, answer):
             #     len_reward = 0.2
             norm_response = normalize_answer(response_)
             norm_answer = normalize_answer(answer)
-            ans_pattern = r"\b(?:in|at|on|inside)?\s*(?:the\s*)?" + re.escape(norm_answer) + r"\b$"
+            #ans_pattern = r"\b(?:in|at|on|inside)?\s*(?:the\s*)?" + re.escape(norm_answer) + r"\b$"
+            ans_pattern = r"\b(?:in|at|on|inside|)?\s*(?:the\s*)?(?:\w+'s\s*)?" + re.escape(norm_answer) + r"\s*\b$"
             match = re.match(ans_pattern, norm_response, re.DOTALL | re.MULTILINE)
             if match:
                 return 2
