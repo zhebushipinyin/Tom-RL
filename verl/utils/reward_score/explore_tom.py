@@ -28,7 +28,7 @@ def normalize_answer(answer: str) -> str:
     return normalized
 
 def reward_func(response, answer):
-    pattern = r".*?<answer>.*?</answer>$"
+    pattern = r".*?<answer>.*?</answer>\s*\b<|im_end|>$"
     
     tags = {
         'ans_start': ('<answer>', 1),
@@ -43,12 +43,6 @@ def reward_func(response, answer):
         match = re.match(pattern, response, re.DOTALL | re.MULTILINE)
         if match:
             response_ = extract_xml_answer(response)
-            # think = response.split('<answer>')[0]
-            # if len(think) <= 2:
-            #     return 0
-            # #len_reward = 0
-            # # if len(think.split())>20:
-            # #     len_reward = 0.2
             norm_response = normalize_answer(response_)
             norm_answer = normalize_answer(answer)
             #ans_pattern = r"\b(?:in|at|on|inside)?\s*(?:the\s*)?" + re.escape(norm_answer) + r"\b$"
@@ -60,11 +54,15 @@ def reward_func(response, answer):
             else:
                 print(f'Right format but wrong answer, score: 0, response: ({norm_response}), answer: ({norm_answer})')
                 return 0
+        else:
+            print('Right format (tag counts correct) but no answer found, score: 0')
+            return 0
     print(f'Wrong format, score: 0')
     return 0
 
 
 def extract_solution(solution_str: str) -> Tuple[Optional[str], str]:
+    # breakpoint()
     """Extracts the final answer from the model's response string.
     
     Args:
@@ -135,17 +133,21 @@ def compute_score(solution_str: str,
 if __name__ == "__main__":
     # Test cases for different types of ExploreToM answers
     test_cases = [
+        # {
+        #     "ground_truth": "does not know about it",
+        #     "model_response": "Assistant: <think>Let me reason through this step by step. Isabella doesn't have direct knowledge of Colton's belief about festival marketing strategies because they haven't communicated about it. Isabella has her own understanding, but without explicit communication with Colton, she cannot know his beliefs on the matter.</think><answer>Isabella does not know about it</answer>"
+        # },
+        # {
+        #     "ground_truth": "leather briefcase",
+        #     "model_response": "Assistant: <think>I need to trace Kaylee's understanding of Liam's belief. Since Liam saw the silver letter opener being moved to the leather briefcase, but Kaylee doesn't know this, she would think Liam still believes it's in the original location.</think><answer>Kaylee thinks that Liam will search for the silver letter opener in the leather briefcase.</answer>"
+        # },
+        # {
+        #     "ground_truth": "yes",
+        #     "model_response": "Assistant: <think>Based on the story, Isabella was directly involved in the festival marketing strategy discussions and contributed her ideas. She clearly has knowledge about these strategies.</think><answer>Yes</answer>"
+        # },
         {
-            "ground_truth": "does not know about it",
-            "model_response": "Assistant: <think>Let me reason through this step by step. Isabella doesn't have direct knowledge of Colton's belief about festival marketing strategies because they haven't communicated about it. Isabella has her own understanding, but without explicit communication with Colton, she cannot know his beliefs on the matter.</think><answer>Isabella does not know about it</answer>"
-        },
-        {
-            "ground_truth": "leather briefcase",
-            "model_response": "Assistant: <think>I need to trace Kaylee's understanding of Liam's belief. Since Liam saw the silver letter opener being moved to the leather briefcase, but Kaylee doesn't know this, she would think Liam still believes it's in the original location.</think><answer>Kaylee thinks that Liam will search for the silver letter opener in the leather briefcase.</answer>"
-        },
-        {
-            "ground_truth": "yes",
-            "model_response": "Assistant: <think>Based on the story, Isabella was directly involved in the festival marketing strategy discussions and contributed her ideas. She clearly has knowledge about these strategies.</think><answer>Yes</answer>"
+            "ground_truth": "blue_box",
+            "model_response": "<answer>Lily thinks Jayden thinks the peas is in the blue_box</answer><|im_end|>"
         }
     ]
     

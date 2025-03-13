@@ -3,15 +3,16 @@
 set -x
 
 MODEL_PATHS=(
-    # "Qwen/Qwen2.5-0.5B-Instruct"
-    # "Qwen/Qwen2.5-1.5B-Instruct"
-    # "Qwen/Qwen2.5-3B-Instruct"
+    "Qwen/Qwen2.5-0.5B-Instruct"
+    "Qwen/Qwen2.5-1.5B-Instruct"
+    "Qwen/Qwen2.5-3B-Instruct"
     "Qwen/Qwen2.5-7B-Instruct"
 )
 
 DATA_PATHS=(
     "data/cleaned_tom/raw/ToM_train_600.parquet"
     "data/cleaned_tom/raw/hi_tom_3000.csv"
+    "data/cleaned_tom/raw/Hi_ToM_cleaned.csv"
 )
 
 for MODEL_PATH in ${MODEL_PATHS[@]}; do

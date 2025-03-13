@@ -22,7 +22,7 @@ def make_prefix(story, question, template_type='base', add_hint=False, wo_think=
     Returns:
         Formatted prompt with instructions
     """
-    quiz = f"Read the following story and answer the question. Story: {story}\n Question: {question}"
+    quiz = f"Read the following story and answer the question. \nStory: {story}\n Question: {question}"
     # quiz = story + "\n\n" + question
     
     if template_type == 'base':

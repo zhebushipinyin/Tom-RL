@@ -6,10 +6,17 @@ from vllm import LLM, SamplingParams
 from datasets import load_dataset, Dataset
 from transformers import AutoTokenizer
 
-SYSTEM_PROMPT = """Read the following story and answer the question. Think step-by-step. Provide the answer first,and then explain it. Answer in the following JSON format:
+# SYSTEM_PROMPT = """Read the following story and answer the question. Think step-by-step. Provide the answer first,and then explain it. Answer in the following JSON format:
+# {
+# "answer": "answer text",
+# "explain": "step by step thinking"
+# }
+# """
+
+SYSTEM_PROMPT = """Read the following story and answer the question. Think step-by-step. Provide the thinking first, and then the answer. Answer in the following JSON format:
 {
-"answer": "answer text",
-"explain": "step by step thinking"
+"thinking": "step by step thinking",
+"answer": "answer text"
 }
 """
 
@@ -38,7 +45,7 @@ def reward_func(response, answer):
     response_ = response
     # "answer": "answer text"
     try:
-        response_ = response.split('answer": "')[1].split('",')[0]
+        response_ = response.split('answer": "')[1].split('"')[0]
     except Exception as e:
         return 0
     if response_:
@@ -60,7 +67,7 @@ def eval_model(model_path, data_path, output_path):
     tokenizer = AutoTokenizer.from_pretrained(model_path)
 
     sampling_params = SamplingParams(
-        max_tokens=tokenizer.model_max_length,
+        max_tokens=2048,
         temperature=0.6,
         top_k=-1,
         top_p=0.95,
@@ -81,7 +88,7 @@ def eval_model(model_path, data_path, output_path):
         if 'story' in example:
             # hi_tom
             story = example['story']
-            question = example['question']
+            question = example['question_old']
         else:
             # explore_tom
             story = example['story_structure']
