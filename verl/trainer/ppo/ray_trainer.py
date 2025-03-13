@@ -467,13 +467,14 @@ class RayPPOTrainer(object):
 
         metric_dict = {}
         for data_source, rewards in data_source_reward.items():
-            # count_equal_3 = sum(1 for reward in rewards if reward == 3)
-            # total_count = len(rewards)
-            # metric_dict[f'val/test_score/{data_source}'] = count_equal_3 / total_count if total_count > 0 else 0
-            count_equal_2 = sum(1 for reward in rewards if reward == 2)
+            count_equal_3 = sum(1 for reward in rewards if reward == 3)
             total_count = len(rewards)
-            print(f'[Validate] {data_source} count_equal_2: {count_equal_2}, total_count: {total_count}')
-            metric_dict[f'val/test_score/{data_source}'] = count_equal_2 / total_count if total_count > 0 else 0
+            print(f'[Validate] {data_source} count_equal_3: {count_equal_3}, total_count: {total_count}')
+            metric_dict[f'val/test_score/{data_source}'] = count_equal_3 / total_count if total_count > 0 else 0
+            # count_equal_2 = sum(1 for reward in rewards if reward == 2)
+            # total_count = len(rewards)
+            # print(f'[Validate] {data_source} count_equal_2: {count_equal_2}, total_count: {total_count}')
+            # metric_dict[f'val/test_score/{data_source}'] = count_equal_2 / total_count if total_count > 0 else 0
 
         return metric_dict
 

@@ -1,5 +1,5 @@
 
-| model | hi_tom | explore_tom |
+| model | hi_tom(600) | explore_tom |
 |-------|-------------------|-------------------|
 | Qwen2.5-0.5B-Instruct  | 0.32(0.32) | 0.51 |
 | Qwen2.5-1.5B-Instruct  | 0.34(0.40) | 0.58 |

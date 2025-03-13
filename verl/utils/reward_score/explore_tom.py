@@ -1,68 +1,36 @@
 import re
 from typing import Dict, Tuple, Optional, Union, Any
 
-
-def extract_xml_answer(text: str) -> str:
-    answer_pattern = r'<answer>(.*?)</answer>'
-    matches = list(re.finditer(answer_pattern, text, re.DOTALL))
-    if not matches:
-        return None
-        
-    final_answer = matches[-1].group(1).strip()
-    return final_answer
-
-
-def normalize_answer(answer: str) -> str:
-    """Normalizes the answer text for better comparison.
-    Args:
-        answer: Raw answer text
-    Returns:
-        Normalized answer text
-    """
-    # Convert to lowercase  
-    normalized = answer.lower()
-    # Remove extra whitespace
-    normalized = re.sub(r'\s+', ' ', normalized).strip()
-    # Remove punctuation that doesn't affect meaning
-    normalized = re.sub(r'[.,;:!?]', '', normalized)
-    return normalized
-
-def reward_func(response, answer):
-    pattern = r".*?<answer>.*?</answer>\s*\b<|im_end|>$"
+# for dpsk
+# def extract_solution(solution_str: str) -> Tuple[Optional[str], str]:
+#     """Extracts the final answer from the model's response string.
     
-    tags = {
-        'ans_start': ('<answer>', 1),
-        'ans_end': ('</answer>', 1),
-    }
-    counts = 0
-    for tag_name, (tag_str, expected_count) in tags.items():
-        count = response.count(tag_str)
-        if count == expected_count:
-            counts +=1
-    if counts == 2:
-        match = re.match(pattern, response, re.DOTALL | re.MULTILINE)
-        if match:
-            response_ = extract_xml_answer(response)
-            norm_response = normalize_answer(response_)
-            norm_answer = normalize_answer(answer)
-            #ans_pattern = r"\b(?:in|at|on|inside)?\s*(?:the\s*)?" + re.escape(norm_answer) + r"\b$"
-            ans_pattern = r"\b(?:in|at|on|inside|)?\s*(?:the\s*)?(?:\w+'s\s*)?" + re.escape(norm_answer) + r"\s*\b$"
-            match = re.match(ans_pattern, norm_response, re.DOTALL | re.MULTILINE)
-            if match:
-                print(f'Right format and exactly match, score: 2, response: ({norm_response}), answer: ({norm_answer})')
-                return 2
-            else:
-                print(f'Right format but wrong answer, score: 0, response: ({norm_response}), answer: ({norm_answer})')
-                return 0
-        else:
-            print('Right format (tag counts correct) but no answer found, score: 0')
-            return 0
-    print(f'Wrong format, score: 0')
-    return 0
+#     Args:
+#         solution_str: Raw response string from the language model
+        
+#     Returns:
+#         Tuple containing (extracted_answer, processed_string)
+#     """
+#     # Split response to isolate assistant output
+#     if "<｜Assistant｜>" in solution_str:
+#         processed_str = solution_str.split("<｜Assistant｜>", 1)[1]
+#     else:
+#         print("[Error] Failed to locate model response header")
+#         return None, solution_str
 
+#     # Extract final answer using XML-style tags
+#     answer_pattern = r'<answer>(.*?)</answer>'
+#     matches = list(re.finditer(answer_pattern, processed_str, re.DOTALL))
+    
+#     if not matches:
+#         print("[Error] No valid answer tags found")
+#         return None, processed_str
+        
+#     final_answer = matches[-1].group(1).strip()
+#     return final_answer, processed_str
 
+# for qwen
 def extract_solution(solution_str: str) -> Tuple[Optional[str], str]:
-    # breakpoint()
     """Extracts the final answer from the model's response string.
     
     Args:
@@ -92,6 +60,112 @@ def extract_solution(solution_str: str) -> Tuple[Optional[str], str]:
     return final_answer, processed_str
 
 
+def normalize_answer(answer: str) -> str:
+    """Normalizes the answer text for better comparison.
+    
+    Args:
+        answer: Raw answer text
+        
+    Returns:
+        Normalized answer text
+    """
+    # Convert to lowercase
+    normalized = answer.lower()
+    
+    # Remove extra whitespace
+    normalized = re.sub(r'\s+', ' ', normalized).strip()
+    
+    # Remove punctuation that doesn't affect meaning
+    normalized = re.sub(r'[.,;:!?]', '', normalized)
+    
+    return normalized
+
+def validate_response_structure(processed_str: str) -> bool:
+    """Performs comprehensive validation of response structure.
+    
+    Args:
+        processed_str: Processed response string from the model
+        
+    Returns:
+        Boolean indicating whether all formatting requirements are met
+    """
+    print("\n[Structure Validation]")
+    validation_passed = True
+
+    # Check required tags
+    tags = {
+        'think_start': ('<think>', 1),
+        'think_end': ('</think>', 1),
+        'answer_start': ('<answer>', 1),
+        'answer_end': ('</answer>', 1)
+    }
+
+    positions = {}
+    for tag_name, (tag_str, expected_count) in tags.items():
+        count = processed_str.count(tag_str)
+        positions[tag_name] = pos = processed_str.find(tag_str)
+        
+        print(f"  {tag_str}: count={count}, position={pos}")
+        
+        if count != expected_count:
+            print(f"  [Error] {tag_str} appears {count} times (expected {expected_count})")
+            validation_passed = False
+
+    # Verify tag order
+    if (positions['think_start'] > positions['think_end'] or
+        positions['think_end'] > positions['answer_start'] or
+        positions['answer_start'] > positions['answer_end']):
+        print("  [Error] Incorrect tag order: Expected <think>...</think><answer>...</answer>")
+        validation_passed = False
+    else:
+        print("  Tag sequence validation passed")
+
+    return validation_passed
+
+def check_answer_correctness(predicted_answer: str, ground_truth: str) -> Tuple[bool, float]:
+    """Checks if the predicted answer matches the ground truth.
+    
+    Args:
+        predicted_answer: The answer extracted from model's response
+        ground_truth: The ground truth answer
+        
+    Returns:
+        Tuple containing (is_correct, score)
+    """
+    print("\n[Answer Validation]")
+    print(f"  Ground truth: '{ground_truth}'")
+    print(f"  Predicted: '{predicted_answer}'")
+    
+    # Normalize both answers for better comparison
+    norm_pred = normalize_answer(predicted_answer)
+    norm_truth = normalize_answer(ground_truth)
+    
+    print(f"  Normalized ground truth: '{norm_truth}'")
+    print(f"  Normalized prediction: '{norm_pred}'")
+    
+    # Check exact match after normalization
+    if norm_pred == norm_truth:
+        print("  Answer validation: EXACT MATCH")
+        return True, 2.0
+    
+    # Check if ground truth is a choice and prediction contains the correct choice
+    if ' / ' in ground_truth:
+        choices = [normalize_answer(choice) for choice in ground_truth.split(' / ')]
+        print(f"  Multiple choice options: {choices}")
+        
+        for choice in choices:
+            if choice in norm_pred:
+                print(f"  Answer validation: MATCH (contains correct choice: '{choice}')")
+                return True, 2.0
+    
+    # Check if prediction is in list of acceptable answers
+    # This could be extended with domain-specific lists of equivalent answers
+    if norm_pred in norm_truth or norm_truth in norm_pred:
+        print(f"  Answer validation: Partial MATCH (contains correct choice: {norm_pred}({norm_truth}))")
+        return False, -1.5
+    print("  Answer validation: MISMATCH")
+    return False, -2.0
+
 def compute_score(solution_str: str, 
                  ground_truth: Union[Dict[str, Any], str],
                  format_reward: int = 1,
@@ -108,7 +182,7 @@ def compute_score(solution_str: str,
         Total score (sum of format and answer rewards)
     """
     print("\n" + "="*80)
-    print(" Processing ToM Sample ".center(80, '='))
+    print(" Processing Theory of Mind Sample ".center(80, '='))
     
     # Extract ground truth
     if isinstance(ground_truth, dict):
@@ -122,9 +196,27 @@ def compute_score(solution_str: str,
     answer_text, processed_str = extract_solution(solution_str)
     print(f"\n[Model Response]\n{processed_str}")
 
-    print(f'\n[Evaluating]')
-    total_score = reward_func(processed_str, gt_answer)
-    
+    # Validate response structure
+    format_correct = validate_response_structure(processed_str)
+    format_score = format_reward if format_correct else -abs(format_reward)
+    print(f"\n  Format validation: {'PASS' if format_correct else 'FAIL'}")
+    print(f"  Format score: {format_score}")
+
+    # Validate answer content
+    answer_score = 0
+    if format_correct and answer_text:
+        is_correct, score_value = check_answer_correctness(answer_text, gt_answer)
+        answer_score = score_value
+    else:
+        answer_score = -2
+        print("\n[Content Validation] Skipped due to format errors or missing answer")
+
+    total_score = format_score + answer_score
+    print("\n" + "-"*80)
+    print(f" Final Score ".center(80, '-'))
+    print(f"  Format: {format_score}")
+    print(f"  Answer: {answer_score}")
+    print(f"  Total: {total_score}")
     print("="*80 + "\n")
 
     return total_score
@@ -133,21 +225,17 @@ def compute_score(solution_str: str,
 if __name__ == "__main__":
     # Test cases for different types of ExploreToM answers
     test_cases = [
-        # {
-        #     "ground_truth": "does not know about it",
-        #     "model_response": "Assistant: <think>Let me reason through this step by step. Isabella doesn't have direct knowledge of Colton's belief about festival marketing strategies because they haven't communicated about it. Isabella has her own understanding, but without explicit communication with Colton, she cannot know his beliefs on the matter.</think><answer>Isabella does not know about it</answer>"
-        # },
-        # {
-        #     "ground_truth": "leather briefcase",
-        #     "model_response": "Assistant: <think>I need to trace Kaylee's understanding of Liam's belief. Since Liam saw the silver letter opener being moved to the leather briefcase, but Kaylee doesn't know this, she would think Liam still believes it's in the original location.</think><answer>Kaylee thinks that Liam will search for the silver letter opener in the leather briefcase.</answer>"
-        # },
-        # {
-        #     "ground_truth": "yes",
-        #     "model_response": "Assistant: <think>Based on the story, Isabella was directly involved in the festival marketing strategy discussions and contributed her ideas. She clearly has knowledge about these strategies.</think><answer>Yes</answer>"
-        # },
         {
-            "ground_truth": "blue_box",
-            "model_response": "<answer>Lily thinks Jayden thinks the peas is in the blue_box</answer><|im_end|>"
+            "ground_truth": "does not know about it",
+            "model_response": "Assistant: <think>Let me reason through this step by step. Isabella doesn't have direct knowledge of Colton's belief about festival marketing strategies because they haven't communicated about it. Isabella has her own understanding, but without explicit communication with Colton, she cannot know his beliefs on the matter.</think><answer>Isabella does not know about it</answer>"
+        },
+        {
+            "ground_truth": "leather briefcase",
+            "model_response": "Assistant: <think>I need to trace Kaylee's understanding of Liam's belief. Since Liam saw the silver letter opener being moved to the leather briefcase, but Kaylee doesn't know this, she would think Liam still believes it's in the original location.</think><answer>Kaylee thinks that Liam will search for the silver letter opener in the leather briefcase.</answer>"
+        },
+        {
+            "ground_truth": "yes",
+            "model_response": "Assistant: <think>Based on the story, Isabella was directly involved in the festival marketing strategy discussions and contributed her ideas. She clearly has knowledge about these strategies.</think><answer>Yes</answer>"
         }
     ]
     
