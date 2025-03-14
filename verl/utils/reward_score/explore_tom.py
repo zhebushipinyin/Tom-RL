@@ -204,7 +204,7 @@ def check_answer_correctness(predicted_answer: str, ground_truth: str) -> Tuple[
     ans_pattern = r".*?" + re.escape(norm_truth) + r"\s*\b$"
     if re.match(ans_pattern, norm_pred):
         print("  Answer validation: EXACT MATCH with loose format")
-        return True, 1.5
+        return True, 2
     
     print("  Answer validation: MISMATCH")
     return False, -2.0
