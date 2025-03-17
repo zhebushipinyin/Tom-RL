@@ -151,7 +151,8 @@ def compute_grpo_outcome_advantage(token_level_rewards: torch.Tensor,
         for i in range(bsz):
             scores[i] = (scores[i] - id2mean[index[i]]) / (id2std[index[i]] + epsilon)
         scores = scores.unsqueeze(-1).tile([1, response_length]) * eos_mask
-
+        
+    print(f'[GRPO group rewards] {np.array([np.stack([tensor.numpy() for tensor in value]) for value in id2score.values()])}')
     return scores, scores
 
 
