@@ -16,7 +16,7 @@ ROLLOUT_N=16
 # model_names=("Qwen/Qwen2.5-7B-Instruct-1M" "Qwen/Qwen2.5-7B-Instruct")
 model_names=("Qwen/Qwen2.5-7B-Instruct-1M" "Qwen/Qwen2.5-7B-Instruct" "Qwen/Qwen2.5-3B-Instruct" "Qwen/Qwen2.5-1.5B-Instruct" "Qwen/Qwen2.5-0.5B-Instruct") 
 use_hints=(True)
-lrs=(5e-6 4e-7 5e-7 3e-7)
+lrs=(5e-6 5e-7 4e-7 3e-7)
 
 num_epochs=3
 
@@ -45,8 +45,8 @@ do
                 actor_rollout_ref.model.path=$model_name \
                 actor_rollout_ref.actor.optim.lr=$lr \
                 actor_rollout_ref.model.use_remove_padding=True \
-                actor_rollout_ref.actor.ppo_mini_batch_size=256 \
-                actor_rollout_ref.actor.ppo_micro_batch_size=64 \
+                actor_rollout_ref.actor.ppo_mini_batch_size=128 \
+                actor_rollout_ref.actor.ppo_micro_batch_size=32 \
                 actor_rollout_ref.actor.use_kl_loss=True \
                 actor_rollout_ref.actor.kl_loss_coef=0.001 \
                 actor_rollout_ref.actor.kl_loss_type=low_var_kl \
@@ -57,7 +57,7 @@ do
                 actor_rollout_ref.rollout.log_prob_micro_batch_size=160 \
                 actor_rollout_ref.rollout.tensor_model_parallel_size=1 \
                 actor_rollout_ref.rollout.name=vllm \
-                actor_rollout_ref.rollout.gpu_memory_utilization=0.8 \
+                actor_rollout_ref.rollout.gpu_memory_utilization=0.7 \
                 actor_rollout_ref.rollout.n=$ROLLOUT_N \
                 actor_rollout_ref.ref.log_prob_micro_batch_size=160 \
                 actor_rollout_ref.ref.fsdp_config.param_offload=True \
