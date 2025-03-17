@@ -6,40 +6,38 @@
 #SBATCH --nodes=1
 #SBATCH --gres=gpu:4            
 #SBATCH --cpus-per-task=64
-#SBATCH -t 40:00:00
+#SBATCH -t 72:00:00
 #SBATCH -e logs/slurm-%j.err
 #SBATCH -o logs/slurm-%j.out
-#SBATCH --qos=lv1           
+#SBATCH --qos=lv1
 
-source ~/anaconda3/etc/profile.d/conda.sh
-conda activate logic
 
 set -x
 
-# ray stop
+# 获取今天的日期
+TODAY=$(date +%Y%m%d)
+mkdir -p logs/${TODAY}
+
+source ~/anaconda3/etc/profile.d/conda.sh
+conda activate logic
 
 export VLLM_ATTENTION_BACKEND=XFORMERS
 
 NUM_GPUS=$(nvidia-smi --query-gpu=name --format=csv,noheader | wc -l)
 
-
 train_batch_size=8
 enable_gradient_checkpointing=True
+ROLLOUT_N=16
 
-use_hints=(True False)
-model_names=("Qwen/Qwen2.5-7B-Instruct-1M" "Qwen/Qwen2.5-7B-Instruct" "Qwen/Qwen2.5-3B-Instruct" "Qwen/Qwen2.5-1.5B-Instruct" "Qwen/Qwen2.5-0.5B-Instruct")
-lrs=(3e-7 4e-7 5e-7)
-num_epochs=2
+# model_names=("Qwen/Qwen2.5-7B-Instruct-1M" "Qwen/Qwen2.5-7B-Instruct")
+model_names=("Qwen/Qwen2.5-7B-Instruct-1M" "Qwen/Qwen2.5-7B-Instruct" "Qwen/Qwen2.5-3B-Instruct" "Qwen/Qwen2.5-1.5B-Instruct" "Qwen/Qwen2.5-0.5B-Instruct") 
+use_hints=(True)
+lrs=(5e-6 5e-7 4e-7 3e-7)
 
-# model_names=("Qwen/Qwen2.5-7B-Instruct")
-# train_sources=("hi_tom")
-# use_hints=(True)
-# lrs=(3e-7)
+num_epochs=3
 
 for model_name in ${model_names[@]}
 do
-    # 提取 "Qwen/Qwen2.5-7B-Instruct-1M" 中的 7B
-    model_size=$(echo $model_name | grep -o "[0-9.]\+B" | head -1)
     for lr in ${lrs[@]}
     do
         for use_hint in ${use_hints[@]}
@@ -63,8 +61,8 @@ do
                 actor_rollout_ref.model.path=$model_name \
                 actor_rollout_ref.actor.optim.lr=$lr \
                 actor_rollout_ref.model.use_remove_padding=True \
-                actor_rollout_ref.actor.ppo_mini_batch_size=256 \
-                actor_rollout_ref.actor.ppo_micro_batch_size=64 \
+                actor_rollout_ref.actor.ppo_mini_batch_size=128 \
+                actor_rollout_ref.actor.ppo_micro_batch_size=32 \
                 actor_rollout_ref.actor.use_kl_loss=True \
                 actor_rollout_ref.actor.kl_loss_coef=0.001 \
                 actor_rollout_ref.actor.kl_loss_type=low_var_kl \
@@ -75,21 +73,21 @@ do
                 actor_rollout_ref.rollout.log_prob_micro_batch_size=160 \
                 actor_rollout_ref.rollout.tensor_model_parallel_size=1 \
                 actor_rollout_ref.rollout.name=vllm \
-                actor_rollout_ref.rollout.gpu_memory_utilization=0.8 \
-                actor_rollout_ref.rollout.n=16 \
+                actor_rollout_ref.rollout.gpu_memory_utilization=0.7 \
+                actor_rollout_ref.rollout.n=$ROLLOUT_N \
                 actor_rollout_ref.ref.log_prob_micro_batch_size=160 \
                 actor_rollout_ref.ref.fsdp_config.param_offload=True \
                 algorithm.kl_ctrl.kl_coef=0.001 \
                 trainer.critic_warmup=0 \
                 trainer.logger=['console','wandb'] \
-                trainer.project_name='GRPO_tom_lambda_0312' \
-                trainer.experiment_name="$(basename $model_name)-$lr-$use_hint" \
+                trainer.project_name='GRPO_tom_lambda_rw' \
+                trainer.experiment_name="$(basename $model_name)-$lr-$use_hint-$ROLLOUT_N" \
                 trainer.n_gpus_per_node=$NUM_GPUS \
                 trainer.nnodes=1 \
                 trainer.default_hdfs_dir=null \
                 trainer.save_freq=50 \
                 trainer.test_freq=5 \
-                trainer.total_epochs=$num_epochs $@ 2>&1 | tee logs/tom_grpo_$(basename $model_name)_${lr}_${use_hint}.log
+                trainer.total_epochs=$num_epochs $@ 2>&1 | tee logs/${TODAY}/tom_grpo_$(basename $model_name)_${lr}_${use_hint}_${ROLLOUT_N}.log
         done
     done
 done
