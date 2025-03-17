@@ -120,6 +120,9 @@ def eval_model(model_path, data_path, output_path):
         dataset = load_dataset('parquet', data_files=data_path)['train']
     elif data_path.endswith('.csv'):
         dataset = load_dataset('csv', data_files=data_path)['train']
+    elif data_path.endswith('.xlsx'):
+        dataset = pd.read_excel(data_path)
+        dataset = Dataset.from_pandas(dataset)
     else:
         raise ValueError(f"Unsupported file type: {data_path}")
 
@@ -127,8 +130,12 @@ def eval_model(model_path, data_path, output_path):
     for example in dataset:
         if 'prompt' in example:
             prompt = example['prompt'][0]['content']
-        else:
+        elif 'story' in example and 'question' in example:
             prompt = make_prompt(example['story'], example['question'])
+        elif 'story_structure' in example and 'question' in example:
+            prompt = make_prompt(example['story_structure'], example['question'])
+        else:
+            raise ValueError(f"Invalid example: {example}")
         eval_prompts.append(prompt)
     model_results = llm.generate(eval_prompts, sampling_params, use_tqdm=True)
 
@@ -137,7 +144,12 @@ def eval_model(model_path, data_path, output_path):
     for example, result in zip(dataset, model_results):
         model_answer = result.outputs[0].text
         example['model_answer'] = model_answer
-        gt_answer = example['answer']
+
+        if 'answer' in example:
+            gt_answer = example['answer']
+        else:
+            gt_answer = example['expected_answer']
+    
         final_answer, processed_str = extract_solution(model_answer)
         example['final_answer'] = final_answer
         is_correct, score = check_answer_correctness(final_answer, gt_answer)
@@ -156,7 +168,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     # global_step_500: Qwen2.5-7B-Instruct-1M-3e-7-True
     parser.add_argument("--model_path", type=str, default='./global_step_500/')
-    parser.add_argument("--data_path", type=str, default='./data/cleaned_tom/hi_tom_explore_tom_test_hint.parquet')
-    parser.add_argument("--output_path", type=str, default='./eval_tom/results/reasoning_model_eval_2.csv')
+    parser.add_argument("--data_path", type=str, default='./data/cleaned_tom/raw/explore_tom.xlsx')
+    parser.add_argument("--output_path", type=str, default='./eval_tom/results/ckpt_explore_tom_full.csv')
     args = parser.parse_args()
     eval_model(args.model_path, args.data_path, args.output_path)
