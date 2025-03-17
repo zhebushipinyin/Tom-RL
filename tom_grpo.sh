@@ -2,6 +2,10 @@
 
 set -x
 
+# 获取今天的日期
+TODAY=$(date +%Y%m%d)
+mkdir -p logs/${TODAY}
+
 source ~/anaconda3/etc/profile.d/conda.sh
 conda activate logic
 
@@ -71,7 +75,7 @@ do
                 trainer.default_hdfs_dir=null \
                 trainer.save_freq=50 \
                 trainer.test_freq=5 \
-                trainer.total_epochs=$num_epochs $@ 2>&1 | tee logs/tom_grpo_$(basename $model_name)_${lr}_${use_hint}_${ROLLOUT_N}.log
+                trainer.total_epochs=$num_epochs $@ 2>&1 | tee logs/${TODAY}/tom_grpo_$(basename $model_name)_${lr}_${use_hint}_${ROLLOUT_N}.log
         done
     done
 done
