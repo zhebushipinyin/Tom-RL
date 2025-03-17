@@ -74,7 +74,7 @@ def reward_func_(response, answer):
         if match:
             response_ = extract_xml_answer(response)
             think = response.split('<answer>')[0]
-            if len(think) <= 2:
+            if len(think.split()) <= 10:
                 return 0
             #len_reward = 0
             # if len(think.split())>20:
@@ -82,12 +82,17 @@ def reward_func_(response, answer):
             norm_response = normalize_answer(response_)
             norm_answer = normalize_answer(answer)
             #ans_pattern = r"\b(?:in|at|on|inside)?\s*(?:the\s*)?" + re.escape(norm_answer) + r"\b$"
-            ans_pattern = r"\b(?:in|at|on|inside|)?\s*(?:the\s*)?(?:\w+'s\s*)?" + re.escape(norm_answer) + r"\s*\b$"
+            ans_pattern = r".*?" + re.escape(norm_answer) + r"\s*$"
             match = re.match(ans_pattern, norm_response, re.DOTALL | re.MULTILINE)
             if match:
                 return 2
             else:
-                return 0
+                norm_answer_ = norm_answer.replace('_', ' ')
+                ans_pattern = r".*?" + re.escape(norm_answer_) + r"\s*$"
+                match = re.match(ans_pattern, norm_response, re.DOTALL | re.MULTILINE)
+                if match:
+                    return 2
+                return 0.5
     return 0
 
 
@@ -137,12 +142,13 @@ training_args = GRPOConfig(
     num_generations=8,
     max_prompt_length=512,
     max_completion_length=512,
-    num_train_epochs=3,
+    num_train_epochs=2,
     save_steps=100,
     max_grad_norm=0.1,
     report_to="wandb",
     log_on_each_node=False,
     gradient_checkpointing=True,
+    beta=0.001,
 )
 
 """

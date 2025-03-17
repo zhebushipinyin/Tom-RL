@@ -118,6 +118,7 @@ training_args = GRPOConfig(
     report_to="wandb",
     log_on_each_node=False,
     gradient_checkpointing=True,
+    beta=0.001,
 )
 
 """
