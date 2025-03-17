@@ -11,10 +11,10 @@
 #SBATCH -o logs/slurm-%j.out
 #SBATCH --qos=lv1
 
+set -x
+
 source ~/anaconda3/etc/profile.d/conda.sh
 conda activate logic
-
-set -x
 
 export VLLM_ATTENTION_BACKEND=XFORMERS
 

@@ -1,9 +1,9 @@
 #!/bin/bash
 
+set -x
+
 source ~/anaconda3/etc/profile.d/conda.sh
 conda activate logic
-
-set -x
 
 export VLLM_ATTENTION_BACKEND=XFORMERS
 
