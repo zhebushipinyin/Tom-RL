@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH -J r++
+#SBATCH -J tom
 #SBATCH --mem=768g
 #SBATCH -p HGX,DGX                    
 #SBATCH --nodes=1

@@ -101,6 +101,12 @@ def check_answer_correctness(predicted_answer: str, ground_truth: str) -> Tuple[
     print("  Answer validation: MISMATCH")
     return False, 0
 
+def make_prompt(story, question) -> str:
+    quiz = story + "\n\n" + question
+    prefix = f"""<|im_start|>system\nYou are a helpful assistant. The assistant first thinks about the reasoning process in the mind and then provides the user with the answer. The reasoning process and answer are enclosed within <think> </think> and <answer> </answer> tags, respectively, i.e., <think> reasoning process here </think><answer> answer here </answer>. Now the user asks you to solve a theory of mind reasoning problem. After thinking, when you finally reach a conclusion, clearly state your answer within <answer> </answer> tags.\n<|im_end|>\n<|im_start|>user\n{quiz}\n<|im_end|>\n<|im_start|>assistant\n<think>"""
+    return prefix
+
+
 def eval_model(model_path, data_path, output_path):
     llm = LLM(model=model_path, tokenizer=model_path, max_model_len=4096)
     sampling_params = SamplingParams(
@@ -110,10 +116,19 @@ def eval_model(model_path, data_path, output_path):
         top_p=0.95,
     )
 
-    dataset = load_dataset('parquet', data_files=data_path)['train']
+    if data_path.endswith('.parquet'):
+        dataset = load_dataset('parquet', data_files=data_path)['train']
+    elif data_path.endswith('.csv'):
+        dataset = load_dataset('csv', data_files=data_path)['train']
+    else:
+        raise ValueError(f"Unsupported file type: {data_path}")
+
     eval_prompts = []
     for example in dataset:
-        prompt = example['prompt'][0]['content']
+        if 'prompt' in example:
+            prompt = example['prompt'][0]['content']
+        else:
+            prompt = make_prompt(example['story'], example['question'])
         eval_prompts.append(prompt)
     model_results = llm.generate(eval_prompts, sampling_params, use_tqdm=True)
 
@@ -136,11 +151,12 @@ def eval_model(model_path, data_path, output_path):
     results_df = pd.DataFrame(results)
     results_df.to_csv(output_path, index=False)
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     # global_step_500: Qwen2.5-7B-Instruct-1M-3e-7-True
     parser.add_argument("--model_path", type=str, default='./global_step_500/')
     parser.add_argument("--data_path", type=str, default='./data/cleaned_tom/hi_tom_explore_tom_test_hint.parquet')
-    parser.add_argument("--output_path", type=str, default='./eval_tom/results/reasoning_model_eval.csv')
+    parser.add_argument("--output_path", type=str, default='./eval_tom/results/reasoning_model_eval_2.csv')
     args = parser.parse_args()
     eval_model(args.model_path, args.data_path, args.output_path)
