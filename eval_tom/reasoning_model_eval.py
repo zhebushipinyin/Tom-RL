@@ -107,7 +107,7 @@ def make_prompt(story, question) -> str:
     return prefix
 
 
-def eval_model(model_path, data_path, output_path):
+def eval_model(model_path, data_path, output_dir):
     llm = LLM(model=model_path, tokenizer=model_path, max_model_len=4096)
     sampling_params = SamplingParams(
         max_tokens=4096,
@@ -161,7 +161,7 @@ def eval_model(model_path, data_path, output_path):
     print(f"Accuracy: {correct_count}/{len(results)} = {correct_count / len(results)}")
 
     results_df = pd.DataFrame(results)
-    results_df.to_csv(output_path, index=False)
+    results_df.to_csv(output_dir, index=False)
 
 
 if __name__ == "__main__":
@@ -169,6 +169,6 @@ if __name__ == "__main__":
     # global_step_500: Qwen2.5-7B-Instruct-1M-3e-7-True
     parser.add_argument("--model_path", type=str, default='./global_step_500/')
     parser.add_argument("--data_path", type=str, default='./data/cleaned_tom/raw/explore_tom.xlsx')
-    parser.add_argument("--output_path", type=str, default='./eval_tom/results/ckpt_explore_tom_full.csv')
+    parser.add_argument("--output_dir", type=str, default='./eval_tom/results/')
     args = parser.parse_args()
-    eval_model(args.model_path, args.data_path, args.output_path)
+    eval_model(args.model_path, args.data_path, args.output_dir)
