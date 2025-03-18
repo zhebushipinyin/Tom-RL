@@ -154,11 +154,16 @@ def eval_model(model_path, data_path, output_dir):
         example['final_answer'] = final_answer
         is_correct, score = check_answer_correctness(final_answer, gt_answer)
         example['is_correct'] = is_correct
+        if 'extra_info' in example:
+           # 展开 extra_info 
+           for key, value in example['extra_info'].items():
+               example[key] = value
+           del example['extra_info']
         if is_correct:
             correct_count += 1
         results.append(example)
 
-    print(f"Accuracy: {correct_count}/{len(results)} = {correct_count / len(results)}")
+    print(f"{model_path} Accuracy: {correct_count}/{len(results)} = {correct_count / len(results)}")
 
     results_df = pd.DataFrame(results)
     results_df.to_csv(output_dir, index=False)

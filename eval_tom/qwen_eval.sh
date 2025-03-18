@@ -2,6 +2,7 @@
 
 set -x
 
+TODAY=$(date +%Y%m%d)
 CKPTS_DIR="./checkpoints/GRPO_merge_tom/Qwen2.5-7B-Instruct-1M-4e-7-True-16/actor"
 
 DATA_PATHS=(
@@ -12,6 +13,14 @@ DATA_PATHS=(
 )
 
 OUTPUT_DIR="./eval_tom/ckpts_results"
+if [ ! -d "${OUTPUT_DIR}" ]; then
+    mkdir -p ${OUTPUT_DIR}
+fi
+
+LOG_DIR="./logs/${TODAY}"
+if [ ! -d "${LOG_DIR}" ]; then
+    mkdir -p ${LOG_DIR}
+fi
 
 for CKPT_PATH in ${CKPTS_DIR}/*; do
     if [ -d "${CKPT_PATH}" ]; then
@@ -20,7 +29,7 @@ for CKPT_PATH in ${CKPTS_DIR}/*; do
         STEP="${CKPT_PATH##*_}"
         for DATA_PATH in ${DATA_PATHS[@]}; do
             # python3 eval_tom/qwen_series_eval.py --model_path ${CKPT_PATH} --data_path ${DATA_PATH} --output_dir ${OUTPUT_DIR}/ckpt_${STEP}.csv
-            python3 eval_tom/reasoning_model_eval.py --model_path ${CKPT_PATH} --data_path ${DATA_PATH} --output_dir ${OUTPUT_DIR}/ckpt_${STEP}.csv
+            python3 eval_tom/reasoning_model_eval.py --model_path ${CKPT_PATH} --data_path ${DATA_PATH} --output_dir ${OUTPUT_DIR}/ckpt_${STEP}.csv | tee ${LOG_DIR}/eval_${STEP}_${DATA_PATH}.log
         done
     fi
 done
