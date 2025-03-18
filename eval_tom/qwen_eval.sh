@@ -19,7 +19,8 @@ for CKPT_PATH in ${CKPTS_DIR}/*; do
         # global_step_100
         STEP="${CKPT_PATH##*_}"
         for DATA_PATH in ${DATA_PATHS[@]}; do
-            python3 eval_tom/qwen_series_eval.py --model_path ${CKPT_PATH} --data_path ${DATA_PATH} --output_dir ${OUTPUT_DIR}/ckpt_${STEP}.csv
+            # python3 eval_tom/qwen_series_eval.py --model_path ${CKPT_PATH} --data_path ${DATA_PATH} --output_dir ${OUTPUT_DIR}/ckpt_${STEP}.csv
+            python3 eval_tom/reasoning_model_eval.py --model_path ${CKPT_PATH} --data_path ${DATA_PATH} --output_dir ${OUTPUT_DIR}/ckpt_${STEP}.csv
         done
     fi
 done
