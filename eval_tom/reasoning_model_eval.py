@@ -107,8 +107,8 @@ def make_prompt(story, question) -> str:
     return prefix
 
 
-def eval_model(model_path, data_path, output_dir):
-    llm = LLM(model=model_path, tokenizer=model_path, max_model_len=4096)
+def eval_model(model_path, data_path, output_dir, tp):
+    llm = LLM(model=model_path, tokenizer=model_path, max_model_len=4096, tensor_parallel_size=tp)
     sampling_params = SamplingParams(
         max_tokens=4096,
         temperature=0.6,
@@ -175,5 +175,6 @@ if __name__ == "__main__":
     parser.add_argument("--model_path", type=str, default='./global_step_500/')
     parser.add_argument("--data_path", type=str, default='./data/cleaned_tom/raw/explore_tom.xlsx')
     parser.add_argument("--output_dir", type=str, default='./eval_tom/results/')
+    parser.add_argument('--tp', type=int, default=2)
     args = parser.parse_args()
-    eval_model(args.model_path, args.data_path, args.output_dir)
+    eval_model(args.model_path, args.data_path, args.output_dir, args.tp)
