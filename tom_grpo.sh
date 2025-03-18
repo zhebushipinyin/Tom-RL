@@ -19,10 +19,10 @@ ROLLOUT_N=16
 
 # model_names=("Qwen/Qwen2.5-7B-Instruct-1M" "Qwen/Qwen2.5-7B-Instruct" "Qwen/Qwen2.5-3B-Instruct" "Qwen/Qwen2.5-1.
 # 5B-Instruct" "Qwen/Qwen2.5-0.5B-Instruct")
-model_names=("Qwen/Qwen2.5-3B-Instruct" "Qwen/Qwen2.5-7B-Instruct") 
+model_names=("Qwen/Qwen2.5-7B-Instruct-1M" "Qwen/Qwen2.5-3B-Instruct" "Qwen/Qwen2.5-7B-Instruct") 
 use_hints=(True)
 # lrs=(4e-7 5e-7 3e-7 5e-6)
-lrs=(4e-7)
+lrs=(5e-7)
 
 num_epochs=2
 
