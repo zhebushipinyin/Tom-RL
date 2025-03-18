@@ -94,7 +94,7 @@ elif model_name =='Qwen2.5-1.5B-Instruct':
     output_dir="outputs/Qwen-1.5B-GRPO"
     run_name="Qwen-1.5B-GRPO-gsm8k"
 else:
-    output_dir="outputs/Qwen-0.5B-GRPO-HIEx"
+    output_dir="outputs/Qwen-0.5B-GRPO-HIEx-N"
     run_name="Qwen-0.5B-GRPO-HIEx"
 
 training_args = GRPOConfig(
