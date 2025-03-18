@@ -85,8 +85,9 @@ if __name__ == '__main__':
                         help='Whether to remove the thinking tags')
     args = parser.parse_args()
 
+
     # deception,story_length,question_order,sample_id,story,question,choices,answer,question_old,answer_old
-    train_src = './data/cleaned_tom/merge/ToM_train_HiEx.parquet'
+    train_src = './data/cleaned_tom/merge/ToM_train_HiEx_3200.parquet'
     test_src = './data/cleaned_tom/merge/ToM_test_HiExTi.parquet'
 
     train_ds = datasets.load_dataset('parquet', data_files=train_src)['train']
