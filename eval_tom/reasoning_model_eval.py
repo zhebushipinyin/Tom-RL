@@ -107,8 +107,8 @@ def make_prompt(story, question) -> str:
     return prefix
 
 
-def eval_model(model_path, data_path, output_path):
-    llm = LLM(model=model_path, tokenizer=model_path, max_model_len=4096)
+def eval_model(model_path, data_path, output_dir, tp):
+    llm = LLM(model=model_path, tokenizer=model_path, max_model_len=4096, tensor_parallel_size=tp)
     sampling_params = SamplingParams(
         max_tokens=4096,
         temperature=0.6,
@@ -154,14 +154,19 @@ def eval_model(model_path, data_path, output_path):
         example['final_answer'] = final_answer
         is_correct, score = check_answer_correctness(final_answer, gt_answer)
         example['is_correct'] = is_correct
+        if 'extra_info' in example:
+           # 展开 extra_info 
+           for key, value in example['extra_info'].items():
+               example[key] = value
+           del example['extra_info']
         if is_correct:
             correct_count += 1
         results.append(example)
 
-    print(f"Accuracy: {correct_count}/{len(results)} = {correct_count / len(results)}")
+    print(f"{model_path} Accuracy: {correct_count}/{len(results)} = {correct_count / len(results)}")
 
     results_df = pd.DataFrame(results)
-    results_df.to_csv(output_path, index=False)
+    results_df.to_csv(output_dir, index=False)
 
 
 if __name__ == "__main__":
@@ -169,6 +174,7 @@ if __name__ == "__main__":
     # global_step_500: Qwen2.5-7B-Instruct-1M-3e-7-True
     parser.add_argument("--model_path", type=str, default='./global_step_500/')
     parser.add_argument("--data_path", type=str, default='./data/cleaned_tom/raw/explore_tom.xlsx')
-    parser.add_argument("--output_path", type=str, default='./eval_tom/results/ckpt_explore_tom_full.csv')
+    parser.add_argument("--output_dir", type=str, default='./eval_tom/results/')
+    parser.add_argument('--tp', type=int, default=2)
     args = parser.parse_args()
-    eval_model(args.model_path, args.data_path, args.output_path)
+    eval_model(args.model_path, args.data_path, args.output_dir, args.tp)

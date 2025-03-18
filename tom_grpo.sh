@@ -17,12 +17,14 @@ train_batch_size=8
 enable_gradient_checkpointing=True
 ROLLOUT_N=16
 
-# model_names=("Qwen/Qwen2.5-7B-Instruct-1M" "Qwen/Qwen2.5-7B-Instruct")
-model_names=("Qwen/Qwen2.5-7B-Instruct-1M" "Qwen/Qwen2.5-7B-Instruct" "Qwen/Qwen2.5-3B-Instruct" "Qwen/Qwen2.5-1.5B-Instruct" "Qwen/Qwen2.5-0.5B-Instruct") 
+# model_names=("Qwen/Qwen2.5-7B-Instruct-1M" "Qwen/Qwen2.5-7B-Instruct" "Qwen/Qwen2.5-3B-Instruct" "Qwen/Qwen2.5-1.
+# 5B-Instruct" "Qwen/Qwen2.5-0.5B-Instruct")
+model_names=("Qwen/Qwen2.5-3B-Instruct" "Qwen/Qwen2.5-7B-Instruct") 
 use_hints=(True)
-lrs=(5e-6 5e-7 4e-7 3e-7)
+# lrs=(4e-7 5e-7 3e-7 5e-6)
+lrs=(4e-7)
 
-num_epochs=3
+num_epochs=2
 
 for model_name in ${model_names[@]}
 do
@@ -31,8 +33,8 @@ do
         for use_hint in ${use_hints[@]}
         do
             if [ $use_hint == "True" ]; then
-                data_train_files=$HOME/data/tom/hi_tom_train_2000_hint.parquet
-                test_files=$HOME/data/tom/hi_tom_explore_tom_test_hint.parquet
+                data_train_files=$HOME/data/tom/ToM_train_HiEx_hint.parquet
+                test_files=$HOME/data/tom/ToM_test_HiExTi_hint.parquet
             else
                 data_train_files=$HOME/data/tom/hi_tom_train_2000.parquet
                 test_files=$HOME/data/tom/hi_tom_explore_tom_test.parquet
@@ -68,7 +70,7 @@ do
                 algorithm.kl_ctrl.kl_coef=0.001 \
                 trainer.critic_warmup=0 \
                 trainer.logger=['console','wandb'] \
-                trainer.project_name='GRPO_tom_lambda_rw' \
+                trainer.project_name='GRPO_merge_tom' \
                 trainer.experiment_name="$(basename $model_name)-$lr-$use_hint-$ROLLOUT_N" \
                 trainer.n_gpus_per_node=$NUM_GPUS \
                 trainer.nnodes=1 \
