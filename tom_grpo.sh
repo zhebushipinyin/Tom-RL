@@ -19,7 +19,8 @@ ROLLOUT_N=16
 
 # model_names=("Qwen/Qwen2.5-7B-Instruct-1M" "Qwen/Qwen2.5-7B-Instruct" "Qwen/Qwen2.5-3B-Instruct" "Qwen/Qwen2.5-1.
 # 5B-Instruct" "Qwen/Qwen2.5-0.5B-Instruct")
-model_names=("Qwen/Qwen2.5-7B-Instruct-1M" "Qwen/Qwen2.5-3B-Instruct" "Qwen/Qwen2.5-7B-Instruct") 
+# model_names=("Qwen/Qwen2.5-7B-Instruct-1M" "Qwen/Qwen2.5-3B-Instruct" "Qwen/Qwen2.5-7B-Instruct") 
+model_names=("Qwen/Qwen2.5-7B-Instruct" "Qwen/Qwen2.5-3B-Instruct" "Qwen/Qwen2.5-7B-Instruct-1M" ) 
 use_hints=(True)
 # lrs=(4e-7 5e-7 3e-7 5e-6)
 lrs=(5e-7)
@@ -70,13 +71,13 @@ do
                 algorithm.kl_ctrl.kl_coef=0.001 \
                 trainer.critic_warmup=0 \
                 trainer.logger=['console','wandb'] \
-                trainer.project_name='GRPO_merge_tom' \
+                trainer.project_name="GRPO_merge_tom_${TODAY}" \
                 trainer.experiment_name="$(basename $model_name)-$lr-$use_hint-$ROLLOUT_N" \
                 trainer.n_gpus_per_node=$NUM_GPUS \
                 trainer.nnodes=1 \
                 trainer.default_hdfs_dir=null \
                 trainer.save_freq=50 \
-                trainer.test_freq=5 \
+                trainer.test_freq=10 \
                 trainer.total_epochs=$num_epochs $@ 2>&1 | tee logs/${TODAY}/tom_grpo_$(basename $model_name)_${lr}_${use_hint}_${ROLLOUT_N}.log
         done
     done
