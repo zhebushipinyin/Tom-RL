@@ -1,0 +1,255 @@
+﻿story,question,answer,data_source,model_answer,final_answer,is_correct
+"On the shelf, there is a bottle. It is full of beer, there is no wine in it. Yet, the label on this bottle says 'wine' and not 'beer'. Mark walks into the room and notices the bottle. He has never seen it before. He reads the label.",What does Mark think is in the bottle?,wine,kosinski,"According to the information provided:
+- There is a bottle on the shelf.
+- The bottle is full of beer.
+- The label on the bottle says 'wine'.
+- Mark walks into the room and notices the bottle.
+- Mark has never seen it before.
+- Mark reads the label.
+Given this context, Mark looks at the label which states 'wine'. Regardless of what is actually in the bottle (beer), the information presented to him via the label is 'wine'. Therefore, based on the label's information, Mark thinks that the bottle contains wine. His belief is solely based on what the label says, not on the actual contents of the bottle.
+</think>
+<answer> wine </answer>",wine,True
+"On the shelf in the company's headquarters, there is a hard drive that contains only audio files and no video files. Yet, confusingly, its label clearly states 'video files' and not 'audio files'. The newly hired computer engineer finds the hard drive on the shelf. She has never seen this hard drive before. She reads its label.",What does the computer engineer think is on the hard drive?,video files,kosinski,"According to the information provided:
+- The hard drive is on a shelf at the company's headquarters.
+- It contains only audio files.
+- However, its label incorrectly states 'video files'.
+- The newly hired computer engineer finds the hard drive and reads its label.
+Given these details, the computer engineer looks at the label on the hard drive. The label is clearly marked as 'video files'. This is the information the engineer reads and believes to be true based on what the label indicates.
+</think>
+<answer> video files </answer>",video files,True
+"In the freezer, there is a container filled with ice cream. There is no jam in it. Yet, the label says 'jam' and not 'ice cream'. The label is wrong. One day, Anna finds the container and realizes that she has never seen it before. She cannot see what is inside the container. She reads the label.",What does Anna think is in the container?,jam,kosinski,"According to the information provided:
+- There is a container in the freezer.
+- The container is labeled as 'jam'.
+- It is explicitly stated that the label is wrong.
+- Anna finds the container and reads the label.
+Based on this, Anna, reading the label 'jam', assumes that what is inside the container is jam, despite knowing the label is incorrect. The fact that she cannot see what is inside the container does not change her immediate impression based on the label.
+Therefore, Anna thinks it is jam.
+</think>
+<answer> jam </answer>",jam,True
+"A shipping container full of salt arrives at Amsterdam port. There is no sugar in it. It is sealed, and one cannot see what is inside. The shipping documents state that it contains sugar. A customs officer approaches the shipping container. She cannot see what is inside. She reads the shipping documents to figure out what is inside.",What does the customs officer think is in the container?,sugar,kosinski,"According to the information provided:
+- A shipping container full of salt has arrived at Amsterdam port.
+- The shipping documents state that it contains sugar.
+- The customs officer approaches the shipping container.
+- The container is sealed, and one cannot see what is inside.
+- The customs officer reads the shipping documents.
+Based on these points:
+- The shipping documents explicitly state that the container contains sugar.
+- Despite the container actually containing salt, the customs officer relies on the information provided in the documents.
+Therefore, the customs officer believes, based on the shipping documents, that the container contains sugar.
+</think>
+<answer> sugar </answer>",sugar,True
+"There is a closed box on the table of an empty meeting room, in which a seminar is about to take place. The box is filled with pens, and there are no pencils in it. Yet, it is labeled with the word 'pencils'. The first attendee walks into the room and sits in a chair in front of the box. He reads the label.",What does the attendee think is in the box?,pencils,kosinski,"According to the information provided:
+- There is a closed box on the table.
+- The box is filled with pens.
+- There are no pencils in the box.
+- The box is labeled with the word 'pencils'.
+- The first attendee walks into the room and reads the label.
+Given this context, the attendee focuses on the information displayed on the label. The label states 'pencils', even though the box contains pens. Therefore, based on the label, the attendee believes that the contents of the box are pencils.
+</think>
+<answer> pencils </answer>",pencils,True
+"Inside the fridge of the Airbnb host's kitchen is a can labeled as 'tuna'. However, the can actually contains sardines and no tuna. Jill, a guest who just arrived at the house, opens the fridge and sees the can. She cannot see what is inside the can, but she reads the label.",What does Jill think is in the can?,tuna,kosinski,"According to the information provided:
+- The can is labeled as 'tuna'.
+- Jill opens the fridge and sees this can labeled as 'tuna'.
+- At this moment, Jill reads the label but cannot see inside the can.
+Given this sequence of events and information:
+- The label on the can is what Jill directly perceives and reads.
+- Based on the label, Jill thinks the contents of the can are what it is labeled as.
+Therefore, Jill believes that the can contains tuna.
+</think>
+<answer> tuna </answer>",tuna,True
+"There is a paper envelope lying in front of Julia's door. The envelope is filled with leaflets, and there are no receipts in it. Yet, a label with the word 'receipts' is stuck on the outside. Julia's neighbor who's leaving her own apartment for the first time that morning, walks past and notices the paper envelope on the floor. She wonders what is inside the paper envelope and reads the label.",What does Julia's neighbor think is in the paper envelope?,receipts,kosinski,"According to the information given:
+- The paper envelope is filled with leaflets.
+- There are no receipts inside.
+- However, a label with the word 'receipts' is stuck on the outside of the envelope.
+Based on this description, Julia's neighbor walks past and notices this envelope. She sees the label on the outside, which says 'receipts'. This label is the primary visual information she has about the envelope's contents. Therefore, when Julia's neighbor reads the label, she believes that the envelope contains receipts.
+</think>
+<answer> receipts </answer>",receipts,True
+"A vault that's been unopened for over 100 years has just been unlocked. Inside lies a closed box with an engraving on it that reads 'books'. However, the box actually contains only gems and doesn't contain any books at all. An inspector approaches the vault. He cannot see what is inside the box. He reads the engraving.",What does the inspector think is in the box?,books,kosinski,"According to the information provided:
+- The box is engraved with 'books'.
+- The inspector approaches the vault and reads the engraving on the box.
+- The engraving clearly states 'books'.
+- The inspector's perception is based on what he sees, which is the engraving on the box.
+- The inspector does not yet know the actual contents of the box (gems) as he cannot see inside.
+Thus, the inspector's thinking is based solely on the information provided by the engraving.
+Therefore, the inspector thinks that the box contains books.
+</think>
+<answer> books </answer>",books,True
+"A bottle filled with perfume sits on the counter of a department store. There is no water inside it, however, the bottle bears the label 'water' instead of 'perfume'. A new customer walks up to the counter and notices the bottle. He reads the label.",What does the customer think is in the bottle?,water,kosinski,"According to the information provided:
+- A bottle filled with perfume is on the counter.
+- The bottle is labeled 'water' instead of 'perfume'.
+- A new customer walks up and notices the bottle.
+- The customer reads the label 'water'.
+Given these details, the customer's focus is on the label 'water' rather than the actual contents of the bottle, which are perfume. Therefore, when the customer reads the label, he believes that the bottle contains water.
+</think>
+<answer> water </answer>",water,True
+"In an abandoned mansion, a forensics team is inspecting a crime scene. Next to the body is a metal box. It contains cocaine, but it remains closed, and no one can see what is inside. The label on this metal box says heroin. The lead detective, who's just arrived on the scene, crouches down to inspect the metal box. He cannot see what is inside the metal box, but he reads the label.",What does the lead detective think is in the metal box?,heroin,kosinski,"According to the information provided:
+- The metal box is next to the body.
+- It contains cocaine but remains closed.
+- The label on the metal box says heroin.
+- The lead detective has crouched down to inspect the metal box.
+- Although he cannot see inside, he can read the label.
+Based on these details, the detective would be looking at the label on the metal box. The label states that the contents are heroin. Therefore, based on the label, the detective thinks that the metal box contains heroin.
+</think>
+<answer> heroin </answer>",heroin,True
+"The morning of the high school dance Sarah placed her high heel shoes under her dress and then went shopping. That afternoon, her sister borrowed the shoes and later put them under Sarah's bed.","When Sarah gets ready, does she assume her shoes are under her dress?",yes,dodell-feder,"Initially, Sarah placed her high heel shoes under her dress. This is a specific action she took in the morning for her preparation for the dance. After that, the sequence of events states that her sister borrowed the shoes. Following that, Sarah's sister put the shoes under Sarah's bed. This sequence means that the location of the shoes changed from under her dress to under her bed. At the time when Sarah gets ready, she would still assume based on her last action that the shoes are where she left them, which was under her dress. However, since her sister moved them to under her bed, Sarah's assumption about the shoes' location does not match the current reality. Her assumption remains based on her memory of the morning's action. So, when Sarah gets ready, she still assumes her shoes are under her dress.</think>
+<answer> under her dress </answer>",under her dress,False
+Sally and Greg called ahead of time to make a reservation for the back-country cabin. The park ranger forgot to write down the reservation and two other hikers got to the cabin first.,"When Sally and Greg arrive, do they find their cabin unoccupied?",no,dodell-feder,"According to the information given:
+- Sally and Greg made a reservation for the back-country cabin.
+- They called ahead to make this reservation.
+- However, the park ranger forgot to write down the reservation.
+- As a result, two other hikers got to the cabin first.
+Given these events, when Sally and Greg arrive at the cabin, they would find it occupied by the two other hikers who arrived before them. Therefore, the cabin is not available for Sally and Greg as per their reservation.
+</think>
+<answer> unoccupied </answer>",unoccupied,False
+"When Jeff got ready this morning, he put on a light pink shirt instead of a white one. Jeff is colorblind, so he can't tell the difference between subtle shades of color.",Does Jeff believe he is wearing a white shirt?,yes,dodell-feder,"According to the information provided:
+- Jeff put on a light pink shirt instead of a white one.
+- Jeff is colorblind and cannot tell the difference between subtle shades of color.
+Given Jeff's condition, he might not be able to distinguish the light pink shirt from a white one. Despite this, Jeff put on the light pink shirt as he intended to wear it. Therefore, it is reasonable to infer that Jeff believes he is wearing the light pink shirt he chose, not a white one.
+</think>
+<answer> no </answer>",no,False
+"Larry chose a debated topic for his class paper due on Friday. The news on Thursday indicated that the debate had been solved, but Larry never read it.","When Larry writes his paper, does he think the debate has been solved?",no,dodell-feder,"According to the information given:
+- Larry chose a debated topic for his class paper due on Friday.
+- The news on Thursday indicated that the debate had been solved.
+- However, Larry never read this news.
+Larry's belief about the topic for his paper is based on what he chose, not on any external news. The fact that the news indicated the debate had been solved does not automatically mean Larry believes this to be true. His belief remains as it was when he chose the topic. Therefore, when Larry writes his paper, he still thinks the debate is the topic he chose, not that it has been solved. He hasn't updated his belief based on the news he didn't read.
+</think>
+<answer> no </answer>",no,True
+"Every day Jill goes to the coffee shop on the corner and orders a latte, her favorite drink. Today, the cashier misunderstands Jill and prepares a mocha instead.",Does Jill think her drink will taste like a mocha?,yes,dodell-feder,"According to the information given:
+- Every day, Jill goes to the coffee shop and orders a latte.
+- Today, the cashier mistakenly prepares a mocha instead of a latte.
+- The question asks if Jill thinks her drink will taste like a mocha.
+Since Jill regularly orders a latte, it's reasonable to assume that she knows the taste of a latte. There's no indication that Jill expects or believes the drink to be different from what she orders. Therefore, Jill still expects her drink to taste like a latte, not a mocha.
+</think>
+<answer> no </answer>",no,False
+"Amy walked to work today. When George woke up, he saw her car in the drive. Her room was quiet and dark. George knows that when Amy is sick, she lies down in a dark room.",Does George think Amy is sick today?,yes,dodell-feder,"Based on the information given:
+- Amy walked to work today.
+- When George woke up, he saw her car in the drive.
+- Her room was quiet and dark.
+- It's noted that when Amy is sick, she lies down in a dark room.
+
+Analyzing these points:
+- Amy's car being in the drive suggests she went to work, implying she is not sick and does not need to lie down in a dark room to recover.
+- The fact that Amy walked to work contradicts the idea that she is sick, as someone who is sick typically does not go to work.
+- Her room being quiet and dark might be because she went to work (as people leave for work in the morning), not because she is sick.
+Given this information, it appears that George knows Amy's behavior when she is sick, but the evidence (her car in the drive and her going to work) does not support the conclusion that Amy is sick today. Therefore, George does not think Amy is sick today.
+</think>
+<answer> no </answer>",no,False
+John told Mary that he had lost his keys. The two of them searched the house with no luck. Then Mary went outside to look in the car. Suddenly John noticed his keys behind the sofa.,"By the time Mary comes in, does John know where his keys are?",yes,dodell-feder,"According to the information given:
+- John initially told Mary he had lost his keys.
+- They searched the house together but couldn't find them.
+- Then Mary went outside to look in the car.
+- John noticed his keys behind the sofa.
+The key point here is that John found his keys behind the sofa before Mary came back inside. This means that John's knowledge about the location of his keys has changed. The fact that Mary went outside to look in the car does not affect John's current knowledge. At the moment Mary comes back in, John is aware that his keys are behind the sofa. Thus, by the time Mary comes in, John knows where his keys are: behind the sofa.</think>
+<answer> behind the sofa </answer>",behind the sofa,False
+"At night a bear broke into a cooler near a tent and drank the soda. Five hours later, the campers woke up and went to their cooler for breakfast.",Do the campers find their cooler empty of soda?,yes,dodell-feder,"According to the information given:
+- A bear broke into a cooler near a tent.
+- The bear drank the soda.
+- Five hours later, campers woke up and went to their cooler for breakfast.
+The action of the bear drinking the soda implies that the soda was consumed. This means that the quantity of soda within the cooler would be reduced or possibly empty, depending on how much the bear drank. The campers' action of going to the cooler for breakfast five hours later is a sequence of events indicating they checked the cooler.
+Given the bear's actions, it is logical to conclude that the campers would find their cooler empty of soda or significantly reduced in quantity. The question asks if the campers find their cooler empty of soda, which can be true if the bear drank all the soda.
+</think>
+<answer> yes </answer>",yes,True
+"Here is a bag filled with popcorn. There is no chocolate in the bag. Yet, the label on the bag says 'chocolate' and not 'popcorn.' Sam finds the bag. She had never seen the bag before. She cannot see what is inside the bag. She reads the label.",What does Sam believe the bag contains?,chocolate,ullman,"According to the information provided:
+- There is a bag filled with popcorn.
+- The label on the bag says 'chocolate' instead of 'popcorn'.
+- Sam finds the bag and cannot see what is inside.
+- She reads the label on the bag.
+Given this information, Sam's belief is based solely on what is written on the label. The label clearly states 'chocolate'. Sam reads this label and has no reason to doubt or question the information provided by the label. Therefore, Sam believes the bag contains chocolate.
+</think>
+<answer> chocolate </answer>",chocolate,True
+"Here is a bag filled with popcorn. There is no chocolate in the bag. The bag is made of transparent plastic, so you can see what is inside. Yet, the label on the bag says 'chocolate' and not 'popcorn.' Sam finds the bag. She had never seen the bag before. Sam reads the label.",What does Sam believe the bag contains?,popcorn,ullman,"According to the information provided:
+- The bag is filled with popcorn.
+- There is no chocolate in the bag.
+- The bag is made of transparent plastic, allowing you to see its contents.
+- The label on the bag says 'chocolate' instead of 'popcorn.'
+- Sam finds the bag and reads the label.
+Given this context:
+- Sam reads the label, which states 'chocolate.'
+- Based on the label, Sam's belief about the contents of the bag is determined by the information on the label.
+Therefore, Sam believes the bag contains chocolate.
+</think>
+<answer> chocolate </answer>",chocolate,False
+"Here is a bag filled with popcorn. There is no chocolate in the bag. Yet, the label on the bag says 'chocolate' and not 'popcorn.' Sam finds the bag. She had never seen the bag before. She cannot see what is inside the bag. Sam cannot read. Sam looks at the label.",What does Sam believe the bag contains?,she has no guess,ullman,"According to the information given:
+1. The bag contains popcorn.
+2. The label on the bag says 'chocolate'.
+3. Sam cannot read.
+Given these facts:
+- Sam cannot read the label 'chocolate' to understand what it says.
+- Sam does not know what is inside the bag.
+Since Sam cannot read the label and is unfamiliar with the bag, she will believe the contents as stated on the label.
+Therefore, based on the label, Sam believes the bag contains chocolate.
+</think>
+<answer> chocolate </answer>",chocolate,False
+"Here is a bag filled with popcorn. There is no chocolate in the bag. The label on the bag says 'chocolate', rather than 'popcorn.' Before coming into the room, Sam's friend told her ‘the bag in the room has popcorn in it, ignore the label'. Sam believes her friend. Sam finds the bag. She had never seen the bag before. She cannot see what is inside the bag. Sam reads the label, which says the bag has chocolate in it.",What does Sam believe the bag contains?,popcorn,ullman,"According to the information provided:
+1. There is a bag filled with popcorn.
+2. The label on the bag says 'chocolate'.
+3. Sam's friend told her, ""the bag in the room has popcorn in it, ignore the label"".
+4. Sam believes her friend.
+5. Sam finds the bag.
+6. She cannot see what is inside the bag.
+7. Sam reads the label, which says the bag has chocolate in it.
+Despite the label saying 'chocolate', Sam believes what her friend told her. Her friend said to ignore the label and believe that the bag contains popcorn. Therefore, based on her friend's information, Sam believes that the bag contains popcorn.
+</think>
+<answer> popcorn </answer>",popcorn,True
+Sam fills a bag with popcorn and closes it. There is no chocolate in the bag. Sam writes a label and puts it on the bag. Sam looks at the bag. She cannot see what is inside the bag. Sam reads the label. The label says the bag has chocolate in it.,What does Sam believe the bag contains?,popcorn,ullman,"According to the problem:
+1. Sam fills a bag with popcorn and closes it.
+2. There is no chocolate in the bag.
+3. Sam writes a label and puts it on the bag.
+4. Sam looks at the bag and cannot see what is inside.
+5. Sam reads the label, which says the bag has chocolate in it.
+
+Despite the label stating that the bag has chocolate in it, the information provided explicitly states that there is no chocolate in the bag. Sam's belief about what is written on the label does not change the actual contents of the bag. Therefore, Sam believes the bag contains what is stated on the label. The label says the bag has chocolate in it, so based on that label, Sam believes the bag contains chocolate.
+</think>
+<answer> chocolate </answer>",chocolate,False
+"In the room there are John, Mark, a cat, a transparent plastic box, and a glass chest. John takes the cat and puts it in the chest. He leaves the room and goes to school. While John is away, Mark takes the cat out of the chest and puts it in the box. Mark leaves the room and goes to work. John comes back from school and enters the room. He doesn't know what happened in the room when he was away.",Where does John believe the cat is?,in the box,ullman,"According to the sequence of events:
+- Initially, John puts the cat in the chest.
+- After John leaves, Mark removes the cat from the chest and places it in the box.
+- At this point, the cat is inside the box.
+- John then returns to the room.
+Given this information, the location of the cat within the room, according to John's belief, is where he left it when he initially placed it:
+- The initial step says John puts the cat in the chest.
+- The subsequent steps about Mark moving the cat do not affect John's belief, as John is unaware of what Mark did.
+Therefore, based on John's belief, the cat is still where he left it:
+- The cat was placed in the chest by John.
+- John is not aware of Mark's actions.
+Thus, John still believes the cat is inside the chest.
+</think>
+<answer> the chest </answer>",the chest,False
+"In the room there are John, Mark, a cat, a box, and a basket. John takes the cat and puts it on the basket. He leaves the room and goes to school. While John is away, Mark takes the cat off the basket and puts it on the box. Mark leaves the room and goes to work. John comes back from school and enters the room. John looks around the room. He doesn't know what happened in the room when he was away.",Where does John believe the cat is?,on the box,ullman,"According to the information provided:
+- Initially, John takes the cat and puts it on the basket.
+- Then, John leaves the room for school.
+- When John is away, Mark takes the cat off the basket.
+- Mark then puts the cat on the box.
+- Finally, Mark leaves the room to go to work.
+At this point, the situation in the room is as follows:
+- The basket is no longer holding the cat.
+- The cat is now on the box.
+Since John returns to the room after John's actions, John would still believe that the cat is where he originally placed it, which is on the basket. Mark's actions of moving the cat off the basket and onto the box are unknown to John because John left the room before Mark's actions occurred.
+Therefore, John believes the cat is still where he left it.
+</think>
+<answer> on the basket </answer>",on the basket,False
+"In the room there are John, Mark, a cat, a box, and a basket. John takes the cat and puts it in the basket. He leaves the room and goes to school. Mark calls John to tell him he is going to move the cat to the box. John believes him. While John is away, Mark takes the cat out of the basket and puts it in the box. Mark leaves the room and goes to work. John comes back from school and enters the room. He doesn't know what happened in the room when he was away.",Where does John believe the cat is?,in the box,ullman,"According to the information provided:
+- Initially, John takes the cat and puts it in the basket.
+- John leaves the room and goes to school.
+- Mark calls John and tells him he's moving the cat to the box.
+- John believes Mark's statement.
+- While John is away, Mark indeed takes the cat out of the basket and places it in the box.
+- Mark leaves the room and goes to work.
+At this point, John still believes Mark's statement. Since John believes that Mark moved the cat to the box, John's belief remains consistent with what he was told. John's belief does not change after Mark completes the action.
+</think>
+
+Thus, John believes the cat is in the box.
+
+<answer> the box </answer>",the box,False
+"In the room there are John, Mark, a cat, a box, and a basket. John takes the cat and puts it in the basket. He leaves the room and goes to school. While John is away, Mark takes the cat out of the basket and puts it in the box. Mark leaves the room and goes to work. John and Mark come back and enter the room. They don't know what happened in the room when they were away.",Where does John believe the cat is?,in the basket,ullman,"According to the scenario:
+- Initially, John takes the cat and puts it in the basket.
+- At this point, John's belief is that the cat is inside the basket.
+- John leaves the room and goes to school.
+- When John leaves, Mark takes the cat out of the basket and puts it in the box.
+- This action doesn't change John's initial belief, as it occurred while John was away.
+- Mark leaves the room and goes to work.
+- When John and Mark return, they re-enter the room.
+- Given John's initial action, John still believes the cat is where he put it.
+- Therefore, John still believes the cat is in the basket, as this is where he left it before leaving for school.
+</think>
+<answer> in the basket </answer>",in the basket,True

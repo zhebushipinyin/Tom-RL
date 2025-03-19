@@ -5,11 +5,12 @@ set -x
 NUM_GPUS=$(nvidia-smi --query-gpu=name --format=csv,noheader | wc -l)
 
 TODAY=$(date +%Y%m%d)
-CKPTS_DIR="./checkpoints/GRPO_merge_tom/Qwen2.5-7B-Instruct-1M-5e-7-True-16/actor"
+# CKPTS_DIR="./checkpoints/GRPO_merge_tom/Qwen2.5-7B-Instruct-1M-5e-7-True-16/actor"
+CKPTS_DIR="./ckpts/"
 
 DATA_PATHS=(
-    # "./data/cleaned_tom/ToM_test_HiExTi_hint.parquet"
-    "./eval_tom/ood_dataset/expert_tom_data.csv"
+    "./data/cleaned_tom/ToM_test_HiExTi_hint.parquet"
+    # "./eval_tom/ood_dataset/expert_tom_data.csv"
 )
 
 OUTPUT_DIR="./eval_tom/ckpts_results"
