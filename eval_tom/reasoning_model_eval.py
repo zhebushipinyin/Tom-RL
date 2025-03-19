@@ -101,9 +101,14 @@ def check_answer_correctness(predicted_answer: str, ground_truth: str) -> Tuple[
     print("  Answer validation: MISMATCH")
     return False, 0
 
+# def make_prompt(story, question) -> str:
+#     quiz = story + "\n\n" + question
+#     prefix = f"""<|im_start|>system\nYou are a helpful assistant. The assistant first thinks about the reasoning process in the mind and then provides the user with the answer. The reasoning process and answer are enclosed within <think> </think> and <answer> </answer> tags, respectively, i.e., <think> reasoning process here </think><answer> answer here </answer>. Now the user asks you to solve a theory of mind reasoning problem. After thinking, when you finally reach a conclusion, clearly state your answer within <answer> </answer> tags.\n<|im_end|>\n<|im_start|>user\n{quiz}\n<|im_end|>\n<|im_start|>assistant\n<think>"""
+#     return prefix
+
 def make_prompt(story, question) -> str:
     quiz = story + "\n\n" + question
-    prefix = f"""<|im_start|>system\nYou are a helpful assistant. The assistant first thinks about the reasoning process in the mind and then provides the user with the answer. The reasoning process and answer are enclosed within <think> </think> and <answer> </answer> tags, respectively, i.e., <think> reasoning process here </think><answer> answer here </answer>. Now the user asks you to solve a theory of mind reasoning problem. After thinking, when you finally reach a conclusion, clearly state your answer within <answer> </answer> tags.\n<|im_end|>\n<|im_start|>user\n{quiz}\n<|im_end|>\n<|im_start|>assistant\n<think>"""
+    prefix = f"""<|im_start|>system\nYou are a helpful assistant. The assistant first thinks about the reasoning process in the mind and then provides the user with the answer. The reasoning process and answer are enclosed within <think> </think> and <answer> </answer> tags, respectively, i.e., <think> reasoning process here </think><answer> answer here </answer>. Now the user asks you to solve a theory of mind reasoning problem. After thinking, when you finally reach a conclusion, clearly state your answer within <answer> </answer> tags.\nNote: You should assume the following.\n(1) An agent witnesses everything and every movement before exiting a room.\n(2) An agent A can infer another agent B's mental state only if A and B have been in the same room, or have private or public interactions.\n<|im_end|>\n<|im_start|>user\n{quiz}\n<|im_end|>\n<|im_start|>assistant\n<think>"""
     return prefix
 
 
@@ -128,14 +133,21 @@ def eval_model(model_path, data_path, output_dir, tp):
 
     eval_prompts = []
     for example in dataset:
-        if 'prompt' in example:
-            prompt = example['prompt'][0]['content']
-        elif 'story' in example and 'question' in example:
-            prompt = make_prompt(example['story'], example['question'])
-        elif 'story_structure' in example and 'question' in example:
-            prompt = make_prompt(example['story_structure'], example['question'])
+        data_source = example['data_source']
+        if data_source != 'explore_tom':
+            if 'prompt' in example:
+                prompt = example['prompt'][0]['content']
+            elif 'story' in example and 'question' in example:
+                prompt = make_prompt(example['story'], example['question'])
+            elif 'story_structure' in example and 'question' in example:
+                prompt = make_prompt(example['story_structure'], example['question'])
+            else:
+                raise ValueError(f"Invalid example: {example}")
         else:
-            raise ValueError(f"Invalid example: {example}")
+            extra_info = example['extra_info']
+            infilled_story = extra_info['infilled_story']
+            question = example['question']
+            prompt = make_prompt(infilled_story, question)
         eval_prompts.append(prompt)
     model_results = llm.generate(eval_prompts, sampling_params, use_tqdm=True)
 
