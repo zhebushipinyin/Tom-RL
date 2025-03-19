@@ -166,7 +166,7 @@ def eval_model(model_path, data_path, output_dir, tp):
     print(f"{model_path} Accuracy: {correct_count}/{len(results)} = {correct_count / len(results)}")
 
     results_df = pd.DataFrame(results)
-    results_df.to_csv(output_dir, index=False)
+    results_df.to_csv(output_dir, index=False, encoding='utf-8-sig')
 
 
 if __name__ == "__main__":
