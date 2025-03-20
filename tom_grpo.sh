@@ -17,10 +17,10 @@ train_batch_size=8
 enable_gradient_checkpointing=True
 ROLLOUT_N=16
 
-# model_names=("Qwen/Qwen2.5-7B-Instruct-1M" "Qwen/Qwen2.5-7B-Instruct" "Qwen/Qwen2.5-3B-Instruct" "Qwen/Qwen2.5-1.
-# 5B-Instruct" "Qwen/Qwen2.5-0.5B-Instruct")
+# model_names=("Qwen/Qwen2.5-7B-Instruct-1M" "Qwen/Qwen2.5-7B-Instruct" "Qwen/Qwen2.5-3B-Instruct" "Qwen/Qwen2.5-1.5B-Instruct" "Qwen/Qwen2.5-0.5B-Instruct")
 # model_names=("Qwen/Qwen2.5-7B-Instruct-1M" "Qwen/Qwen2.5-3B-Instruct" "Qwen/Qwen2.5-7B-Instruct") 
-model_names=("Qwen/Qwen2.5-7B-Instruct" "Qwen/Qwen2.5-3B-Instruct" "Qwen/Qwen2.5-7B-Instruct-1M" ) 
+# model_names=("Qwen/Qwen2.5-7B-Instruct" "Qwen/Qwen2.5-3B-Instruct" "Qwen/Qwen2.5-7B-Instruct-1M" ) 
+model_names=("Qwen/Qwen2.5-1.5B-Instruct" "Qwen/Qwen2.5-0.5B-Instruct")
 use_hints=(True)
 # lrs=(4e-7 5e-7 3e-7 5e-6)
 lrs=(5e-7)
@@ -71,7 +71,7 @@ do
                 algorithm.kl_ctrl.kl_coef=0.001 \
                 trainer.critic_warmup=0 \
                 trainer.logger=['console','wandb'] \
-                trainer.project_name="GRPO_merge_tom_${TODAY}" \
+                trainer.project_name="GRPO_merge_tom_20250319" \
                 trainer.experiment_name="$(basename $model_name)-$lr-$use_hint-$ROLLOUT_N" \
                 trainer.n_gpus_per_node=$NUM_GPUS \
                 trainer.nnodes=1 \
