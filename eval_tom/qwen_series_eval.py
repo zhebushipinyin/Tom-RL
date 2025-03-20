@@ -61,9 +61,11 @@ def reward_func(response, answer):
     return 0
 
 
-def eval_model(model_path, data_path, output_path):
+def eval_model(model_path, data_path, output_path, tp):
     
-    model = LLM(model=model_path, tokenizer=model_path, gpu_memory_utilization=0.9, tensor_parallel_size=2)
+    model = LLM(model=model_path, tokenizer=model_path, 
+                gpu_memory_utilization=0.9, tensor_parallel_size=tp, 
+                max_model_len=4096)
     tokenizer = AutoTokenizer.from_pretrained(model_path)
 
     sampling_params = SamplingParams(
@@ -119,13 +121,14 @@ def eval_model(model_path, data_path, output_path):
     print(f'{model_id} {data_id} rule_correct_rate: {rule_correct_rate}')
 
     results_df = pd.DataFrame(results)
-    results_df.to_csv(output_path + '/' + f'{model_id}_{data_id}.csv', index=False)
+    results_df.to_csv(output_path + '/' + f'{model_id}_{data_id}.csv', index=False, encoding='utf-8-sig')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_path', type=str, default='Qwen/Qwen2.5-1.5B-Instruct')
+    parser.add_argument('--tp', type=int, default=2)
     # parser.add_argument('--data_path', type=str, default='./data/cleaned_tom/raw/hi_tom_3000.csv')
     parser.add_argument('--data_path', type=str, default='./data/cleaned_tom/raw/ToM_train_600.parquet')
-    parser.add_argument('--output_path', type=str, default='./eval_tom/basline')
+    parser.add_argument('--output_dir', type=str, default='./eval_tom/basline')
     args = parser.parse_args()
-    eval_model(args.model_path, args.data_path, args.output_path)   
+    eval_model(args.model_path, args.data_path, args.output_dir, args.tp)   
