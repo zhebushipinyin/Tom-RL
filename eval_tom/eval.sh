@@ -9,8 +9,9 @@ TODAY=$(date +%Y%m%d)
 CKPTS_DIR="./ckpts/"
 
 DATA_PATHS=(
-    "./data/cleaned_tom/ToM_test_HiExTi_hint.parquet"
-    # "./eval_tom/ood_dataset/expert_tom_data.csv"
+    # "./data/cleaned_tom/ToM_test_HiExTi_hint.parquet"
+    # "./eval_tom/test_dataset/expert_tom_data.csv"
+    "./eval_tom/test_dataset/explore_tom_test_2662.parquet"
 )
 
 OUTPUT_DIR="./eval_tom/ckpts_results"
@@ -37,7 +38,7 @@ for CKPT_PATH in ${CKPTS_DIR}/*; do
                     --model_path ${CKPT_PATH} \
                     --data_path ${DATA_PATH} \
                     --output_dir ${OUTPUT_DIR}/ckpt_${STEP}_${DATA_NAME}_${TODAY}.csv \
-                    --tp ${NUM_GPUS} $@ 2>&1 | tee ${LOG_DIR}/eval_${STEP}_${DATA_PATH}.log
+                    --tp ${NUM_GPUS} $@ 2>&1 | tee ${LOG_DIR}/eval_${STEP}_${DATA_NAME}.log
             done
         fi
     fi
