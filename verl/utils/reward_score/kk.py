@@ -157,15 +157,14 @@ def compute_score(solution_str: str,
     print(" Processing New Sample ".center(80, '='))
     
     # Parse ground truth data
-    #solution_text = ground_truth.get('solution_text_format', '')
-    gt_status = parse_solution_text_format(ground_truth)
+    solution_text = ground_truth.get('solution_text_format', '')
+    gt_status = parse_solution_text_format(solution_text)
     expected_names = list(gt_status.keys())
     print(f"[Ground Truth] Final identities: {gt_status}")
 
     # Extract model answer
     answer_text, processed_str = extract_solution(solution_str)
-    #print(f"\n[Model Response]\n{processed_str}")
-    print('[]:', answer_text)
+    print(f"\n[Model Response]\n{processed_str}")
 
     # Validate response structure
     format_correct = validate_response_structure(processed_str)
@@ -204,13 +203,3 @@ def compute_score(solution_str: str,
     print("="*80 + "\n")
 
     return total_score
-
-
-if __name__ == "__main__":
-    sample_solution_text_format = "(1) Ella is a knight\n(2) Zoey is a knave\n(3) Scarlett is a knight\n(4) Henry is a knight\n(5) Amelia is a knave"
-    answer = "Assistant: <think>think</think><answer>Ella is a knight and Zoey is a knave or Scarlett is a knight\n(4) Henry: knight\n(5) Amelia a knave.</answer>"
-    # {'Ella': 'knight', 'Zoey': 'knave', 'Scarlett': 'knight', 'Henry': 'knight', 'Amelia': 'knave'}
-    gt_status = parse_solution_text_format(sample_solution_text_format)
-    #print(gt_status)
-    total_score = compute_score(answer, sample_solution_text_format)
-    print(total_score)
