@@ -13,7 +13,14 @@ from transformers import AutoTokenizer
 # }
 # """
 
-SYSTEM_PROMPT = """Read the following story and answer the question. Think step-by-step. Provide the thinking first, and then the answer. \nNote: You should assume the following.\n(1) An agent witnesses everything and every movement before exiting a room.\n(2) An agent A can infer another agent B's mental state only if A and B have been in the same room, or have private or public interactions.\nAnswer in the following JSON format:
+# SYSTEM_PROMPT = """Read the following story and answer the question. Think step-by-step. Provide the thinking first, and then the answer. \nNote: You should assume the following.\n(1) An agent witnesses everything and every movement before exiting a room.\n(2) An agent A can infer another agent B's mental state only if A and B have been in the same room, or have private or public interactions.\nAnswer in the following JSON format:
+# {
+# "thinking": "step by step thinking",
+# "answer": "answer text"
+# }
+# """
+
+SYSTEM_PROMPT = """Read the following story and answer the question. Think step-by-step. Provide the thinking first, and then the answer. Answer in the following JSON format:
 {
 "thinking": "step by step thinking",
 "answer": "answer text"
@@ -109,7 +116,7 @@ def eval_model(model_path, data_path, output_path, tp):
         prompt = tokenizer.apply_chat_template(prompt, tokenize=False, add_generation_prompt=True)
         eval_prompts.append(prompt)
     
-    model_results = model.generate(eval_prompts[:10], sampling_params, use_tqdm=True)
+    model_results = model.generate(eval_prompts, sampling_params, use_tqdm=True)
     results = []
     rule_correct = 0
     for example, result in zip(ds, model_results):
