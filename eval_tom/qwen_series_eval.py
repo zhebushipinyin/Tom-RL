@@ -48,12 +48,17 @@ def reward_func(response, answer):
         response_ = response.split('answer": "')[1].split('"')[0]
     except Exception as e:
         return 0
+    
     if response_:
         norm_response = normalize_answer(response_)
         norm_answer = normalize_answer(answer)
+
         # print(f'{norm_response} | {norm_answer}')
-        ans_pattern = r"\b(?:in|at|on|inside)?\s*(?:the\s*)?" + re.escape(norm_answer) + r"\b$"
-        match = re.match(ans_pattern, norm_response, re.DOTALL | re.MULTILINE)
+        # ans_pattern = r"\b(?:in|at|on|inside)?\s*(?:the\s*)?" + re.escape(norm_answer) + r"\b$"
+        # match = re.match(ans_pattern, norm_response, re.DOTALL | re.MULTILINE)
+
+        ans_pattern = r".*?" + re.escape(norm_answer) + r"\s*\b$"
+        match = re.match(ans_pattern, norm_response)
         if match:
             return 1
         else:
@@ -104,7 +109,7 @@ def eval_model(model_path, data_path, output_path, tp):
         prompt = tokenizer.apply_chat_template(prompt, tokenize=False, add_generation_prompt=True)
         eval_prompts.append(prompt)
     
-    model_results = model.generate(eval_prompts, sampling_params, use_tqdm=True)
+    model_results = model.generate(eval_prompts[:10], sampling_params, use_tqdm=True)
     results = []
     rule_correct = 0
     for example, result in zip(ds, model_results):
