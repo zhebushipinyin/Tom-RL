@@ -134,8 +134,14 @@ def eval_model(model_path, data_path, output_dir, tp):
 
     eval_prompts = []
     for example in dataset:
-        data_source = example['data_source']
-        if data_source in ['hi_tom', 'tomi']:
+        data_source = example['data_source'] if 'data_source' in example else 'None'
+        if data_source == 'None':
+            # raw hi_tom
+            assert len(dataset) == 600 and len(example) == 10
+            story = example['story']
+            question = example['question_old']
+            prompt = make_prompt(story, question)
+        elif data_source in ['hi_tom', 'tomi']:
             if 'prompt' in example:
                 prompt = example['prompt'][0]['content']
             elif 'story' in example and 'question' in example:
