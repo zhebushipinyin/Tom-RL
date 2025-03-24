@@ -34,8 +34,7 @@ for CKPTS_DIR in ${ALL_CKPTS_DIRS[@]}; do
     MODEL_ID=$(echo ${CKPTS_DIR} | awk -F'/' '{print $(NF-1)}' | sed -E 's|(Qwen2\.5-[0-9.]+B-Instruct)(-1M)?(-.*)?|\1\2|')
     echo "Processing model: ${MODEL_ID}"
     for CKPT_PATH in ${CKPTS_DIR}/*; do
-        if [ -d "${CKPT_PATH}" ]; then
-            echo "Evaluating ${CKPT_PATH}"
+        echo "Evaluating ${CKPT_PATH}"
         # global_step_100
         STEP="${CKPT_PATH##*_}"
         if [ ${STEP} -eq 700 ] || [ ${STEP} -eq 750 ] || [ ${STEP} -eq 800 ]; then
