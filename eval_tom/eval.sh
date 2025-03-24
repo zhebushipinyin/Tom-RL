@@ -31,6 +31,8 @@ if [ ! -d "${LOG_DIR}" ]; then
 fi
 
 for CKPTS_DIR in ${ALL_CKPTS_DIRS[@]}; do
+    MODEL_ID=$(echo ${CKPTS_DIR} | awk -F'/' '{print $(NF-1)}' | sed -E 's|(Qwen2\.5-[0-9.]+B-Instruct)(-1M)?(-.*)?|\1\2|')
+    echo "Processing model: ${MODEL_ID}"
     for CKPT_PATH in ${CKPTS_DIR}/*; do
         if [ -d "${CKPT_PATH}" ]; then
             echo "Evaluating ${CKPT_PATH}"
@@ -44,8 +46,8 @@ for CKPTS_DIR in ${ALL_CKPTS_DIRS[@]}; do
                 python3 eval_tom/reasoning_model_eval.py \
                     --model_path ${CKPT_PATH} \
                     --data_path ${DATA_PATH} \
-                    --output_dir ${OUTPUT_DIR}/ckpt_${STEP}_${DATA_NAME}_${TODAY}.csv \
-                    --tp ${NUM_GPUS} $@ 2>&1 | tee ${LOG_DIR}/eval_${STEP}_${DATA_NAME}.log
+                    --output_dir ${OUTPUT_DIR}/ckpt_${MODEL_ID}_${STEP}_${DATA_NAME}_${TODAY}.csv \
+                    --tp ${NUM_GPUS} $@ 2>&1 | tee ${LOG_DIR}/eval_${MODEL_ID}_${STEP}_${DATA_NAME}.log
             done
         fi
     done
