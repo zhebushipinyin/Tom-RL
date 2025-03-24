@@ -13,7 +13,7 @@ from transformers import AutoTokenizer
 # }
 # """
 
-SYSTEM_PROMPT = """Read the following story and answer the question. Think step-by-step. Provide the thinking first, and then the answer. Answer in the following JSON format:
+SYSTEM_PROMPT = """Read the following story and answer the question. Think step-by-step. Provide the thinking first, and then the answer. \nNote: You should assume the following.\n(1) An agent witnesses everything and every movement before exiting a room.\n(2) An agent A can infer another agent B's mental state only if A and B have been in the same room, or have private or public interactions.\nAnswer in the following JSON format:
 {
 "thinking": "step by step thinking",
 "answer": "answer text"
