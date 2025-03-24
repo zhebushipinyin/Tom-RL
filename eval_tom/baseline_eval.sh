@@ -21,8 +21,8 @@ MODEL_PATHS=("Qwen/Qwen2.5-0.5B-Instruct"
 DATA_PATHS=(
     "./data/cleaned_tom/raw/Hi_ToM_cleaned.csv"
     "./data/cleaned_tom/ToM_test_HiExTi_hint.parquet"
-    "./eval_tom/test_dataset/expert_tom_data.csv"
-    "./eval_tom/test_dataset/explore_tom_test_2662.parquet"
+    # "./eval_tom/test_dataset/expert_tom_data.csv"
+    # "./eval_tom/test_dataset/explore_tom_test_2662.parquet"
 )
 
 OUTPUT_DIR="./eval_tom/baseline_results"
