@@ -67,7 +67,8 @@ def analyze_results():
                 "hi_tom_600": None,
                 "hi_tom": None,
                 "tomi": None,
-                "explore_tom": None
+                "explore_tom": None,
+                "explore_tom2": None  # 新增字段
             }
             
         # 处理Hi_ToM_cleaned类型的文件
@@ -78,14 +79,25 @@ def analyze_results():
         # 处理ToM_test_HiExTi_hint类型的文件
         elif "ToM_test_HiExTi_hint" in filename:
             if "data_source" in df.columns and "is_correct" in df.columns:
+                # 检查是否是版本2的文件
+                is_version2 = filename.endswith("_2.csv")
+                
                 # 按data_source分组计算准确率
                 accuracy_by_source = df.groupby("data_source")["is_correct"].mean()
                 
                 # 填充相应的结果
-                for source in ["hi_tom", "tomi", "explore_tom"]:
-                    if source in accuracy_by_source:
-                        results_dict[key][source] = accuracy_by_source[source]
-    
+                for source in accuracy_by_source.index:
+                    accuracy = accuracy_by_source[source]
+                    
+                    # 对于explore_tom，根据文件版本选择不同的目标字段
+                    if source == "explore_tom":
+                        if is_version2:
+                            results_dict[key]["explore_tom2"] = accuracy
+                        else:
+                            results_dict[key]["explore_tom"] = accuracy
+                    elif source in ["hi_tom", "tomi"]:
+                        results_dict[key][source] = accuracy
+        
     # 创建结果数据框并排序
     if results_dict:
         results_df = pd.DataFrame(list(results_dict.values()))
