@@ -6,8 +6,13 @@ NUM_GPUS=$(nvidia-smi --query-gpu=name --format=csv,noheader | wc -l)
 
 TODAY=$(date +%Y%m%d)
 # CKPTS_DIR="./checkpoints/GRPO_merge_tom/Qwen2.5-7B-Instruct-1M-5e-7-True-16/actor"
-CKPTS_DIR="./checkpoints/GRPO_merge_tom_20250319/"
-
+ALL_CKPTS_DIRS=(
+    "./checkpoints/GRPO_merge_tom_20250319/Qwen2.5-0.5B-Instruct-5e-7-True-16/actor"
+    "./checkpoints/GRPO_merge_tom_20250319/Qwen2.5-1.5B-Instruct-5e-7-True-16/actor"
+    "./checkpoints/GRPO_merge_tom_20250319/Qwen2.5-3B-Instruct-5e-7-True-16/actor"
+    "./checkpoints/GRPO_merge_tom_20250319/Qwen2.5-7B-Instruct-5e-7-True-16/actor"
+    "./checkpoints/GRPO_merge_tom_20250319/Qwen2.5-7B-Instruct-1M-5e-7-True-16/actor"
+)
 DATA_PATHS=(
     "./data/cleaned_tom/raw/Hi_ToM_cleaned.parquet"
     "./data/cleaned_tom/ToM_test_HiExTi_hint.parquet"
@@ -25,9 +30,10 @@ if [ ! -d "${LOG_DIR}" ]; then
     mkdir -p ${LOG_DIR}
 fi
 
-for CKPT_PATH in ${CKPTS_DIR}/*; do
-    if [ -d "${CKPT_PATH}" ]; then
-        echo "Evaluating ${CKPT_PATH}"
+for CKPTS_DIR in ${ALL_CKPTS_DIRS[@]}; do
+    for CKPT_PATH in ${CKPTS_DIR}/*; do
+        if [ -d "${CKPT_PATH}" ]; then
+            echo "Evaluating ${CKPT_PATH}"
         # global_step_100
         STEP="${CKPT_PATH##*_}"
         if [ ${STEP} -eq 700 ] || [ ${STEP} -eq 750 ] || [ ${STEP} -eq 800 ]; then
@@ -42,6 +48,6 @@ for CKPT_PATH in ${CKPTS_DIR}/*; do
                     --tp ${NUM_GPUS} $@ 2>&1 | tee ${LOG_DIR}/eval_${STEP}_${DATA_NAME}.log
             done
         fi
-    fi
+    done
 done
 
