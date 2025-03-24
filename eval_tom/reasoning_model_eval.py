@@ -141,7 +141,7 @@ def eval_model(model_path, data_path, output_dir, tp):
             story = example['story']
             question = example['question_old']
             prompt = make_prompt(story, question)
-        elif data_source in ['hi_tom', 'tomi']:
+        elif data_source in ['hi_tom', 'tomi', 'explore_tom']:
             if 'prompt' in example:
                 prompt = example['prompt'][0]['content']
             elif 'story' in example and 'question' in example:
@@ -150,11 +150,12 @@ def eval_model(model_path, data_path, output_dir, tp):
                 prompt = make_prompt(example['story_structure'], example['question'])
             else:
                 raise ValueError(f"Invalid example: {example}")
-        elif data_source == 'explore_tom':
-            extra_info = example['extra_info']
-            infilled_story = extra_info['infilled_story']
-            question = example['question']
-            prompt = make_prompt(infilled_story, question)
+        # infilled story
+        # elif data_source == 'explore_tom':
+        #     extra_info = example['extra_info']
+        #     infilled_story = extra_info['infilled_story']
+        #     question = example['question']
+        #     prompt = make_prompt(infilled_story, question)
             
         elif data_source == 'facebook/ExploreToM':
             # print('here')

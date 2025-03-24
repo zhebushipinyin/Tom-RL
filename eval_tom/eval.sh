@@ -14,9 +14,9 @@ ALL_CKPTS_DIRS=(
     "./checkpoints/GRPO_merge_tom_20250319/Qwen2.5-7B-Instruct-1M-5e-7-True-16/actor"
 )
 DATA_PATHS=(
-    "./data/cleaned_tom/raw/Hi_ToM_cleaned.csv"
+    # "./data/cleaned_tom/raw/Hi_ToM_cleaned.csv"
     "./data/cleaned_tom/ToM_test_HiExTi_hint.parquet"
-    "./eval_tom/test_dataset/expert_tom_data.csv"
+    # "./eval_tom/test_dataset/expert_tom_data.csv"
     # "./eval_tom/test_dataset/explore_tom_test_2662.parquet"
 )
 
@@ -45,7 +45,7 @@ for CKPTS_DIR in ${ALL_CKPTS_DIRS[@]}; do
                 python3 eval_tom/reasoning_model_eval.py \
                     --model_path ${CKPT_PATH} \
                     --data_path ${DATA_PATH} \
-                    --output_dir ${OUTPUT_DIR}/ckpt_${MODEL_ID}_${STEP}_${DATA_NAME}_${TODAY}.csv \
+                    --output_dir ${OUTPUT_DIR}/ckpt_${MODEL_ID}_${STEP}_${DATA_NAME}_${TODAY}_2.csv \
                     $@ 2>&1 | tee ${LOG_DIR}/eval_${MODEL_ID}_${STEP}_${DATA_NAME}.log
             done
         fi
