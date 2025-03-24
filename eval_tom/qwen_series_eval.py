@@ -90,7 +90,10 @@ def eval_model(model_path, data_path, output_path, tp):
         if 'story' in example:
             # hi_tom
             story = example['story']
-            question = example['question_old']
+            if 'question_old' in example:
+                question = example['question_old']
+            else:
+                question = example['question']
         else:
             # explore_tom
             story = example['story_structure']
@@ -107,8 +110,8 @@ def eval_model(model_path, data_path, output_path, tp):
     for example, result in zip(ds, model_results):
         model_answer = result.outputs[0].text
         example['model_answer'] = model_answer
-        example['rule_based_eval'] = reward_func(model_answer, example['answer'])
-        print(example['rule_based_eval'])
+        gt_answer = example['answer'] if 'answer' in example else example['expected_answer']
+        example['rule_based_eval'] = reward_func(model_answer, gt_answer)
         results.append(example)
         rule_correct += example['rule_based_eval']
     rule_correct_rate = rule_correct / len(ds)
