@@ -46,7 +46,7 @@ for CKPTS_DIR in ${ALL_CKPTS_DIRS[@]}; do
                     --model_path ${CKPT_PATH} \
                     --data_path ${DATA_PATH} \
                     --output_dir ${OUTPUT_DIR}/ckpt_${MODEL_ID}_${STEP}_${DATA_NAME}_${TODAY}.csv \
-                    --tp ${NUM_GPUS} $@ 2>&1 | tee ${LOG_DIR}/eval_${MODEL_ID}_${STEP}_${DATA_NAME}.log
+                    $@ 2>&1 | tee ${LOG_DIR}/eval_${MODEL_ID}_${STEP}_${DATA_NAME}.log
             done
         fi
     done
