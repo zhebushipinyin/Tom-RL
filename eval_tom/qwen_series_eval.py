@@ -99,6 +99,7 @@ def eval_model(model_path, data_path, output_path, tp):
     eval_prompts = []
 
     for example in ds:
+
         if 'story' in example:
             # hi_tom
             story = example['story']
@@ -110,6 +111,12 @@ def eval_model(model_path, data_path, output_path, tp):
             # explore_tom
             story = example['story_structure']
             question = example['question']
+        
+        if 'data_source' in example and example['data_source'] == 'explore_tom':
+            story = example['extra_info']['infilled_story']
+            question = example['question']
+
+
         cot_prompt = XML_COT_FORMAT.format(story, question)
         prompt = [{'role': 'system', 'content': SYSTEM_PROMPT}, 
                   {'role': 'user', 'content': cot_prompt}]
@@ -136,7 +143,7 @@ def eval_model(model_path, data_path, output_path, tp):
     print(f'{model_id} {data_id} rule_correct_rate: {rule_correct_rate}')
 
     results_df = pd.DataFrame(results)
-    results_df.to_csv(output_path + '/' + f'{model_id}_{data_id}.csv', index=False, encoding='utf-8-sig')
+    results_df.to_csv(output_path + '/' + f'{model_id}_{data_id}_2.csv', index=False, encoding='utf-8-sig')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
