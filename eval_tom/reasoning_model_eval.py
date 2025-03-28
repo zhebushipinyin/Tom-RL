@@ -141,7 +141,7 @@ def eval_model(model_path, data_path, output_dir, tp):
             story = example['story']
             question = example['question_old']
             prompt = make_prompt(story, question)
-        elif data_source in ['hi_tom', 'tomi', 'explore_tom']:
+        elif data_source in ['hi_tom', 'tomi']:
             if 'prompt' in example:
                 prompt = example['prompt'][0]['content']
             elif 'story' in example and 'question' in example:
@@ -151,18 +151,21 @@ def eval_model(model_path, data_path, output_dir, tp):
             else:
                 raise ValueError(f"Invalid example: {example}")
         # infilled story
-        # elif data_source == 'explore_tom':
-        #     extra_info = example['extra_info']
-        #     infilled_story = extra_info['infilled_story']
-        #     question = example['question']
-        #     prompt = make_prompt(infilled_story, question)
-            
-        elif data_source == 'facebook/ExploreToM':
-            # print('here')
-            story = example['story_structure']
+        elif data_source == 'explore_tom':
+            extra_info = example['extra_info']
+            infilled_story = extra_info['infilled_story']
             question = example['question']
-            prompt = make_prompt(story, question)
-            # print(prompt)
+            prompt = make_prompt(infilled_story, question)
+        # elif data_source == 'explore_tom':
+        #     assert 'story_structure' in example and 'question' in example
+        #     prompt = make_prompt(example['story_structure'], example['question'])
+            
+        # elif data_source == 'facebook/ExploreToM':
+        #     # print('here')
+        #     story = example['story_structure']
+        #     question = example['question']
+        #     prompt = make_prompt(story, question)
+        #     # print(prompt)
         else:
             raise ValueError(f"Invalid data source: {data_source}")
         eval_prompts.append(prompt)
